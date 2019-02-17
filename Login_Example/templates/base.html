@@ -1,0 +1,22 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+			<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<title>{% block title %}Django Auth Tutorial{% endblock %}</title>
+</head>
+<body>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10">
+				<h1 class="mt-2">My Sick Website</h1>
+				<hr class="mt-0 mb-4">
+				{% block content %}
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
