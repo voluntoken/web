@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'mxr5y&hkn-5!f)!bz3j0rmk9bd&3x*b@v$#vh*0)kb@hd=)psa'
+SECRET_KEY = '#_3xlp(a7a91me0ryn^ma!qxzfrp6g&jf!arb=*s6sz!x^h&p#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'accounts.apps.AccountsConfig', 
     'users.apps.UsersConfig',
 ]
 
@@ -120,9 +119,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+AUTH_USER_MODEL = 'users.CustomUser'
 
-LOGIN_REDIRECT_URL  = 'home'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-EMAIL_BACKEND       = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH     = os.path.join(BASE_DIR, "sent_emails")
-AUTH_USER_MODEL     = 'users.VolunteerUser'
+
+
+
+#Email Verification
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'voluntoken@gmail.com'
+# EMAIL_HOST_PASSWORD = 'Helpcoin!'
+# EMAIL_PORT = 587

@@ -1,14 +1,15 @@
+# users/admin.py
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import VolunteerUserCreationForm, VolunteerUserChangeForm
-from .models import VolunteerUser
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import CustomUser
 
-class VolunteerUserAdmin(UserAdmin):
-    add_form = VolunteerUserCreationForm
-    form = VolunteerUserChangeForm
-    model = VolunteerUser
-    list_display = ['email', 'username',]
+class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ['email', 'username', 'first_name', 'last_name', 'picture', 'user_type']
 
-admin.site.register(VolunteerUser, VolunteerUserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)
