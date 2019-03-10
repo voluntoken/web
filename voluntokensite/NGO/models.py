@@ -6,7 +6,10 @@ import os
 def get_image_path(instance, filename):
 	return os.path.join('photos', str(instance.id), filename)
 
-class orgs(models.Model):
+#org class - 
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class org(models.Model):
+	#Profile Info
 	name        = models.CharField(max_length = 50)
 	description = models.CharField(max_length = 2500)
 	email       = models.EmailField(max_length = 200)
@@ -15,16 +18,23 @@ class orgs(models.Model):
 
 	def __str__(self):
 		return self.name
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 
-class events(models.Model):
-	parent_orgs = models.ForeignKey(orgs, on_delete=models.CASCADE)
-	
+#event class
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class event(models.Model):
+	#Profile Info
 	name        = models.CharField(max_length = 200)
 	description = models.CharField(max_length = 2500)
 	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+	parent_ngo  = models.ForeignKey(org, on_delete=models.CASCADE)
+	qr_code     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+	is_active   = models.BooleanField(default=True)
+
+	#Timing
 	start_time  = models.DateTimeField()
 	end_time    = models.DateTimeField()
-	
+
 
 	# #NEEDS TESTING -------------------------------------------------
 	# #Check ifstop_time - start_time is positive
@@ -33,25 +43,28 @@ class events(models.Model):
 
 	# #---------------------------------------------------------------
 
-	QR_code     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	active      = models.BooleanField(default=True)
-
 	def __str__(self):
 		return self.name
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 
+#checks_stub class - check in, check out stub
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class checks_stub(models.Model):
-	check_in_or_out  = models.BooleanField(default = True) #True: Check IN, False: Check OUT
+	is_check_in      = models.BooleanField(default = True) #True: Check IN, False: Check OUT
 	time             = models.DateTimeField()
-	parent_event     = models.ForeignKey(events, on_delete=models.CASCADE)
+	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
 	# def __str__(self):
 	# 	return __str__(self.time)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 
+#event registrsation is different from checking in or out
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class event_registration_stub(models.Model):
-	active           = models.BooleanField(default=True)
-	parent_event     = models.ForeignKey(events, on_delete=models.CASCADE)
+	is_active        = models.BooleanField(default=True)
+	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 	# def __str__(self):
 	# 	return __str__(self.parent_event)

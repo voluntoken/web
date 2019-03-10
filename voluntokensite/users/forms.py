@@ -4,8 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 
 
-#admin
-
+#Admin
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class CustomUserCreationForm_Admin(UserCreationForm):
 
     class Meta(UserCreationForm):
@@ -17,9 +17,10 @@ class CustomUserChangeForm_Admin(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'parent_ngo',  'parent_business')
-        
+#----------------------------------------------------------------------------------------------------------------------------------------------------      
 
 #Volunteer
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class CustomUserCreationForm_Volunteer(UserCreationForm):
 
     volunteer_donate = 'DO'
@@ -45,9 +46,11 @@ class CustomUserChangeForm_Volunteer(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email','volunteer_role')
+#----------------------------------------------------------------------------------------------------------------------------------------------------
         
         
 #NGO
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class CustomUserCreationForm_NGO(UserCreationForm):
     
     
@@ -64,8 +67,10 @@ class CustomUserChangeForm_NGO(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email')
+#----------------------------------------------------------------------------------------------------------------------------------------------------
     
-#Business    
+#Business 
+#----------------------------------------------------------------------------------------------------------------------------------------------------   
 class CustomUserCreationForm_Business(UserCreationForm):
         
     class Meta(UserCreationForm):
@@ -81,3 +86,4 @@ class CustomUserChangeForm_Businesss(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('username', 'first_name', 'last_name', 'email')
+#----------------------------------------------------------------------------------------------------------------------------------------------------
