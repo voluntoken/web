@@ -11,21 +11,15 @@ class CustomUser(AbstractUser):
     picture    = models.ImageField(upload_to=get_image_path, blank=True, null=True)
     first_name = models.CharField(max_length = 40)
     last_name  = models.CharField(max_length = 40)
-
-    #USERTYPES
-    volunteer_user_abreviation = 'VO'
-    ngo_user_abreviation       = 'NG'
-    business_user_abreviation  = 'BU'
-
-    user_type_choices  = {
-    			(volunteer_user_abreviation, 'Volunteer User'),
-    			(ngo_user_abreviation, 'NGO User'),
-    			(business_user_abreviation, 'Business User')
-    }
-    user_type  = models.CharField(max_length=2, choices=user_type_choices, default=volunteer_user_abreviation)
+    user_type  = models.CharField(max_length=2)
     
+    volunteer_token = models.IntegerField(null=True)
+    volunteer_role  = models.CharField(max_length=2)
 
-    #refence to NGO, Business, Volunteer 
-    #reference_id = 
+    parent_business = models.ForeignKey('BUSINESS.businesses', on_delete=models.CASCADE, null=True)
+    parent_ngo      = models.ForeignKey('NGO.orgs', on_delete=models.CASCADE, null=True)
+     
     def __str__(self):
         return self.email
+
+

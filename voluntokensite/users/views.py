@@ -2,7 +2,7 @@
 from django.urls import reverse_lazy
 from django.views import generic
 from .models import CustomUser
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm_Volunteer, CustomUserCreationForm_NGO, CustomUserCreationForm_Business
 
 #Additional Email Confirmation Stuff
 from django.http import HttpResponse
@@ -16,8 +16,18 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 
-class SignUp(generic.CreateView):
-    form_class = CustomUserCreationForm
+class SignUp_Volunteer(generic.CreateView):
+    form_class = CustomUserCreationForm_Volunteer
+    success_url = reverse_lazy('login')
+    template_name = 'signup.html'
+    
+class SignUp_NGO(generic.CreateView):
+    form_class = CustomUserCreationForm_NGO
+    success_url = reverse_lazy('login')
+    template_name = 'signup.html'
+    
+class SignUp_Business(generic.CreateView):
+    form_class = CustomUserCreationForm_Business
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
 

@@ -1,15 +1,29 @@
 <!-- templates/home.html -->
 {% extends 'base.html' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Welcome to Voluntoken{% endblock %}
 
 {% block content %}
 {% if user.is_authenticated %}
   Hi {{ user.username }}!
   <p><a href="{% url 'logout' %}">logout</a></p>
 {% else %}
+
   <p>You are not logged in</p>
-  <a href="{% url 'login' %}">login</a> |
-  <a href="{% url 'signup' %}">signup</a>
+  <a href="{% url 'login' %}">login</a> 
+  
+  <br>
+  Sign Up User
+  <a href="{% url 'signup_volunteer' %}">signup</a>
+  
+  <br>
+  Sign Up NGO
+  <a href="{% url 'signup_ngo' %}">signup</a>
+  
+  <br>
+  Sign Up Business
+  <a href="{% url 'signup_business' %}">signup</a>
+  
+  
 {% endif %}
 {% endblock %}
