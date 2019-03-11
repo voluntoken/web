@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import CustomUser
+from datetime import datetime
 import os
 
 
@@ -32,8 +33,8 @@ class event(models.Model):
 	is_active   = models.BooleanField(default=True)
 
 	#Timing
-	start_time  = models.DateTimeField()
-	end_time    = models.DateTimeField()
+	start_time  = models.DateTimeField(default=datetime.now)
+	end_time    = models.DateTimeField(default=datetime.now)
 
 
 	# #NEEDS TESTING -------------------------------------------------

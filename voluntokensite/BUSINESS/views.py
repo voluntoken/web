@@ -7,15 +7,16 @@ from .forms import couponDiscountCreationForm, couponDiscountChangeForm, couponD
 from django.views import View
 from django.shortcuts import render, redirect
 
-
+#COUPONS
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class Create_Coupon_Discount(View):
 	form_class = couponDiscountCreationForm
 	success_url = reverse_lazy('')
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
-		print(request.user.username)
-		print(request.user.parent_business)
+		# print(request.user.username)
+		# print(request.user.parent_business)
 		user_business_id = request.user.parent_business
 		form = self.form_class(parent_business_name=user_business_id)
 		return render(request, self.template_name, {'form': form, 'title':"Discount Creation",'submit_text':"create"})
@@ -30,6 +31,26 @@ class Create_Coupon_Discount(View):
 
 		return render(request, self.template_name, {'form': form})
 
+class Create_Coupon_Donation(View):
+	form_class = couponDonationCreationForm
+	success_url = reverse_lazy('')
+	template_name = 'form.html'
 	
-#class Create_Coupon_Donation(generic.CreateView):
+	def get(self, request, *args, **kwargs):
+		# print(request.user.username)
+		# print(request.user.parent_business)
+		user_business_id = request.user.parent_business
+		form = self.form_class(parent_business_name=user_business_id)
+		return render(request, self.template_name, {'form': form, 'title':"Discount Creation",'submit_text':"create"})
+		
+	def post(self, request, *args, **kwargs):
+		user_business_id = request.user.parent_business
+		form = self.form_class(request.POST, parent_business_name=user_business_id)
+		if form.is_valid():
+			form.save()
+			# <process form cleaned data>
+			return render(request, 'business_home.html', {})
 
+		return render(request, self.template_name, {'form': form})
+
+#----------------------------------------------------------------------------------------------------------------------------------------------------

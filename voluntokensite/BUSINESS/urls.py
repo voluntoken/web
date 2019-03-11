@@ -5,5 +5,5 @@ from . import views
 
 urlpatterns = [
 	path('create_coupons_dis/', views.Create_Coupon_Discount.as_view(), name='create_coupons_dis'),
-#	path('create_coupons_don/', views.Create_Coupon_Donation.as_view(), name='create_coupons_don'),
+	path('create_coupons_don/', views.Create_Coupon_Donation.as_view(), name='create_coupons_don'),
 ]

@@ -20,7 +20,8 @@ from django.core.mail import EmailMessage
 from django.views import View
 
 
-
+#HOME PAGE
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 def home_page(request):
     context = {}
     print("Redirecting to right page!")
@@ -48,8 +49,10 @@ def home_page(request):
     
     print("Not logged in")        
     return render(request, 'home.html', context)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+#SETTINGS
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class Modify_Volunteer(View):
     form_class = CustomUserChangeForm_Volunteer
     success_url = reverse_lazy('home')
@@ -110,10 +113,12 @@ class Modify_Business(View):
             return render(request, 'business_home.html', {})
 
         return render(request, self.template_name, {'form': form})
-        
+#----------------------------------------------------------------------------------------------------------------------------------------------------        
         
 
 
+#SIGN UP
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 class SignUp_Volunteer(generic.CreateView):
     form_class = CustomUserCreationForm_Volunteer
     success_url = reverse_lazy('login')
@@ -128,6 +133,7 @@ class SignUp_Business(generic.CreateView):
     form_class = CustomUserCreationForm_Business
     success_url = reverse_lazy('login')
     template_name = 'signup.html'
+#----------------------------------------------------------------------------------------------------------------------------------------------------
 
 # def signuprequest(request):
 #     if request.method == 'POST':

@@ -67,7 +67,7 @@ class CustomUserCreationForm_NGO(UserCreationForm):
     
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email', 'parent_ngo')
         
     def clean(self):
         self.instance.user_type = 'NG'
@@ -78,7 +78,7 @@ class CustomUserChangeForm_NGO(UserChangeForm):
     password=None
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'parent_ngo')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
     
 #Business 
@@ -87,7 +87,7 @@ class CustomUserCreationForm_Business(UserCreationForm):
         
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email', 'parent_business')
         
     def clean(self):
         self.instance.user_type = 'BU'
@@ -98,5 +98,5 @@ class CustomUserChangeForm_Business(UserChangeForm):
     password=None
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email', 'parent_business')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
