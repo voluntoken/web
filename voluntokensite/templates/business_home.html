@@ -1,0 +1,15 @@
+<!-- templates/home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Voluntoken! {% endblock %}
+
+{% block content %}
+
+	Hi {{ user.first_name }}!
+	
+	<p><a href="{% url 'create_coupons_dis' %}"> create coupons </a></p>
+	<p><a href="{% url 'business_settings' %}">settings</a></p>
+	<p><a href="{% url 'logout' %}">logout</a></p>
+	
+	
+{% endblock %}

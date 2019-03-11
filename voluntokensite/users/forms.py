@@ -42,10 +42,21 @@ class CustomUserCreationForm_Volunteer(UserCreationForm):
         return super(CustomUserCreationForm_Volunteer, self).clean()
         
 class CustomUserChangeForm_Volunteer(UserChangeForm):
-
+    
+    password=None
+    volunteer_donate = 'DO'
+    volunteer_discount = 'DI'
+    volunteer_choices = {
+        (volunteer_donate,'Donator'),
+        (volunteer_discount,'Discounter')
+    }
+    
+    volunteer_role = forms.CharField(help_text='Choose whether you would like to donate your tokens or recieve discounts for them', widget=forms.Select(choices=volunteer_choices ))
+    
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email','volunteer_role')
+        fields = ('first_name', 'last_name', 'email','volunteer_role')
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
         
         
@@ -64,9 +75,10 @@ class CustomUserCreationForm_NGO(UserCreationForm):
 
 class CustomUserChangeForm_NGO(UserChangeForm):
 
+    password=None
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
     
 #Business 
@@ -81,9 +93,10 @@ class CustomUserCreationForm_Business(UserCreationForm):
         self.instance.user_type = 'BU'
         return super(CustomUserCreationForm_Business, self).clean()
 
-class CustomUserChangeForm_Businesss(UserChangeForm):
+class CustomUserChangeForm_Business(UserChangeForm):
 
+    password=None
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name', 'email')
 #----------------------------------------------------------------------------------------------------------------------------------------------------

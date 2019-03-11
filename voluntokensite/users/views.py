@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from .models import CustomUser
 from .forms import CustomUserCreationForm_Volunteer, CustomUserCreationForm_NGO, CustomUserCreationForm_Business
+from .forms import CustomUserChangeForm_Volunteer, CustomUserChangeForm_NGO, CustomUserChangeForm_Business
 
 #Additional Email Confirmation Stuff
 from django.http import HttpResponse
@@ -15,6 +16,103 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+
+from django.views import View
+
+
+
+def home_page(request):
+    context = {}
+    print("Redirecting to right page!")
+
+    if request.user.is_authenticated:
+        if request.user.user_type == "VO":
+            #volunteer 
+            #load events 
+            print("Volunteer")
+            return render(request, 'volunteer_home.html', context)
+        elif request.user.user_type == "NG":
+            #NGO
+            #load NGO events
+            print("NGO")
+            return render(request, 'NGO_home.html', context)
+        elif request.user.user_type == "BU":
+            #Business
+            #load Business coupons 
+            print("Business")
+            return render(request, 'business_home.html', context)
+        else :
+            #should not happen unless admin made user
+            print("SuperUser")
+            return render(request, 'home.html', context)
+    
+    print("Not logged in")        
+    return render(request, 'home.html', context)
+
+
+class Modify_Volunteer(View):
+    form_class = CustomUserChangeForm_Volunteer
+    success_url = reverse_lazy('home')
+    template_name = 'settings.html'
+    
+    def get(self, request, *args, **kwargs):
+        print(request.user.username)
+        user = request.user
+        form = self.form_class(instance=user)
+        return render(request, self.template_name, {'form': form})
+        
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            # <process form cleaned data>
+            return render(request, 'volunteer_home.html', {})
+
+        return render(request, self.template_name, {'form': form})
+        
+class Modify_NGO(View):
+    form_class = CustomUserChangeForm_NGO
+    success_url = reverse_lazy('home')
+    template_name = 'settings.html'
+    
+    def get(self, request, *args, **kwargs):
+        print(request.user.username)
+        user = request.user
+        form = self.form_class(instance=user)
+        return render(request, self.template_name, {'form': form})
+        
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            # <process form cleaned data>
+            return render(request, 'NGO_home.html', {})
+
+        return render(request, self.template_name, {'form': form})
+        
+        
+class Modify_Business(View):
+    form_class = CustomUserChangeForm_Business
+    success_url = reverse_lazy('home')
+    template_name = 'settings.html'
+    
+    def get(self, request, *args, **kwargs):
+        print(request.user.username)
+        user = request.user
+        form = self.form_class(instance=user)
+        return render(request, self.template_name, {'form': form})
+        
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            # <process form cleaned data>
+            return render(request, 'business_home.html', {})
+
+        return render(request, self.template_name, {'form': form})
+        
+        
+
 
 class SignUp_Volunteer(generic.CreateView):
     form_class = CustomUserCreationForm_Volunteer
