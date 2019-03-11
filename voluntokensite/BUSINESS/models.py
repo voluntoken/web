@@ -43,7 +43,7 @@ class coupon(models.Model):
 	#Profile 
 	name                 = models.CharField(max_length = 50)
 	description          = models.CharField(max_length = 100)
-	donation_or_discount = models.BooleanField(default = True) #True: Donation, False: Discount
+	is_donation          = models.BooleanField(default = True) #True: Donation, False: Discount
 	token_cost           = models.FloatField(default = 0.0)
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
 
@@ -58,7 +58,7 @@ class coupon(models.Model):
 #transcation_stub class - keeps track of transcations between businesses and volunteers
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class transaction_stub(models.Model):
-	donation_or_discount = models.BooleanField(default = True) #True: Donation, False: Discount
+	is_donation          = models.BooleanField(default = True) #True: Donation, False: Discount
 	tokens_transferred   = models.FloatField(default = 0.0) #tokens given to business for donation/discount
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
 	parent_volunteer     = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
