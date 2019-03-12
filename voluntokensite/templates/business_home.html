@@ -7,6 +7,8 @@
 
 	Hi {{ user.first_name }}!
 	
+	<p><a href="{% url 'see_coupons_dis' %}"> see discount coupons </a></p>
+	<p><a href="{% url 'see_coupons_don' %}"> see donation coupons </a></p>
 	<p><a href="{% url 'create_coupons_dis' %}"> create discount coupons </a></p>
 	<p><a href="{% url 'create_coupons_don' %}"> create donation coupons </a></p>
 	<p><a href="{% url 'business_settings' %}">settings</a></p>

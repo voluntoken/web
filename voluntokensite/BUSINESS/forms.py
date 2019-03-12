@@ -19,9 +19,8 @@ class couponDiscountCreationForm(ModelForm):
         fields = ('name', 'description', 'token_cost')
         
     def clean(self):
-        self.instance.parent_business = self.parent_business_name
-        self.is_donation              = False
-        self.donation_val             = 0.0
+        self.instance.parent_business          = self.parent_business_name
+        self.instance.is_donation              = False
         return super(couponDiscountCreationForm, self).clean()
 
 class couponDiscountChangeForm(ModelForm):
@@ -42,9 +41,9 @@ class couponDonationCreationForm(ModelForm):
         fields = ('name', 'description', 'donation_val')
         
     def clean(self):
-        self.instance.parent_business = self.parent_business_name
-        self.is_donation              = True
-        self.token_cost               = 1.0/EXCHANGE_RATE*self.donation_val
+        self.instance.parent_business          = self.parent_business_name
+        self.instance.is_donation              = True
+        self.instance.token_cost               = 1.0/EXCHANGE_RATE*self.cleaned_data.get('donation_val')
         return super(couponDonationCreationForm, self).clean()
 
 class couponDonationChangeForm(ModelForm):
@@ -53,7 +52,7 @@ class couponDonationChangeForm(ModelForm):
         fields = ('name', 'description', 'donation_val')
 
     def clean(self):
-        self.token_cost               = 1.0/EXCHANGE_RATE*self.donation_val
+        self.instance.token_cost               = 1.0/EXCHANGE_RATE*self.cleaned_data.get('donation_val')
         return super(couponDonationChangeForm, self).clean()
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -7,8 +7,30 @@ from .forms import eventCreationForm, eventChangeForm
 from django.views import View
 from django.shortcuts import render, redirect
 
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 #COUPONS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
+
+#delete event
+def delete_event(request,event_id =None):
+	event_obj = event.objects.get(id=event_id)
+	event_obj.delete()
+	return HttpResponseRedirect(reverse('see_events'))
+	
+#display events
+class Show_Events(View):
+	template_name = 'event_view.html'
+	
+	def get(self, request, *args, **kwargs):
+			user_ngo_id = request.user.parent_ngo		
+			event_list = event.objects.filter(parent_ngo=user_ngo_id)
+			print(event_list)
+			return render(request, self.template_name, {'title':"Events","events":event_list})
+			
+
+
 class Create_Event(View):
 	form_class = eventCreationForm
 	success_url = reverse_lazy('')
@@ -31,3 +53,27 @@ class Create_Event(View):
 
 		return render(request, self.template_name, {'form': form})
 #----------------------------------------------------------------------------------------------------------------------------------------------------
+
+class Change_Event(View):
+	form_class = eventChangeForm
+	success_url = reverse_lazy('')
+	template_name = 'form.html'
+	
+	def get(self, request, *args, **kwargs):
+		
+		event_obj = event.objects.get(id=self.kwargs['event_id'])
+		form = self.form_class(instance=event_obj)	
+		return render(request, self.template_name, {'form': form, 'title':"Event Modification",'submit_text':"save"})
+
+	def post(self, request, *args, **kwargs):
+		
+		event_obj = event.objects.get(id=self.kwargs['event_id'])
+		form = self.form_class(request.POST, instance=event_obj)			
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect(reverse('see_events'))
+
+		return render(request, self.template_name, {'form': form})
+		
+		
+		
