@@ -24,12 +24,14 @@ MEDIA_URL  = "/media/"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+
+SECRET_KEY = "#_3xlp(a7a91me0ryn^ma!qxzfrp6g&jf!arb=*s6sz!x^h&p#"
+#SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://voluntoken.herokuapp.com']
+ALLOWED_HOSTS = ['https://voluntoken-dev.herokuapp.com']
 
 
 # Application definition
@@ -95,13 +97,13 @@ WSGI_APPLICATION = 'voluntokensite.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=dj_database_url.config('DATABASE_URL')
-    )
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
+#    'default': dj_database_url.config(
+#        default=dj_database_url.config('DATABASE_URL')
+#    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 

@@ -17,6 +17,7 @@ class business(models.Model):
 	description    = models.CharField(max_length = 2500)
 	email          = models.EmailField(max_length = 200)
 	address        = models.CharField(max_length = 500)
+	is_active      = models.BooleanField(default=True)
 	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	#Donations, Discounts Metrics
@@ -46,7 +47,7 @@ class coupon(models.Model):
 	is_donation          = models.BooleanField(default = True) #True: Donation, False: Discount
 	token_cost           = models.FloatField(default = 0.0)
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
-
+	is_active            = models.BooleanField(default=True)
 	donation_val         = models.FloatField(default = 0.0) #only relevant if donation_or_discount is true (coupon is donation)
 	
 	

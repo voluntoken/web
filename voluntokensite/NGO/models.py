@@ -15,6 +15,7 @@ class org(models.Model):
 	description = models.CharField(max_length = 2500)
 	email       = models.EmailField(max_length = 200)
 	address     = models.CharField(max_length = 500)
+	is_active   = models.BooleanField(default=True)
 	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	def __str__(self):
@@ -55,7 +56,7 @@ class checks_stub(models.Model):
 	time             = models.DateTimeField()
 	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
+	
 	# def __str__(self):
 	# 	return __str__(self.time)
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -63,7 +64,7 @@ class checks_stub(models.Model):
 #event registrsation is different from checking in or out
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class event_registration_stub(models.Model):
-	is_active        = models.BooleanField(default=True)
+	is_registered    = models.BooleanField(default=True)
 	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 #----------------------------------------------------------------------------------------------------------------------------------------------------

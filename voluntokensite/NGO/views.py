@@ -74,6 +74,5 @@ class Change_Event(View):
 			return HttpResponseRedirect(reverse('see_events'))
 
 		return render(request, self.template_name, {'form': form})
-		
-		
-		
+
+
