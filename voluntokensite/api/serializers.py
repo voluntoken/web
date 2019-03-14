@@ -3,7 +3,7 @@
 from users.models import CustomUser
 from rest_framework import serializers
 from NGO.models import event, org, event_registration_stub, checks_stub
-from BUSINESS.models import coupon, business
+from BUSINESS.models import coupon, business, transaction_stub
 
 #User AuthSerializer
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -81,6 +81,12 @@ class BusinessSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = business
 		fields = ('id', 'name', 'description', 'email', 'address')
-	
+
+
+class TransactionStubSerializer(serializers.ModelSerializer):
+	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.id')
+	class Meta:
+		model = transaction_stub
+		fields = ('id', 'parent_business', 'parent_volunteer', 'tokens_transferred', 'is_donation')	
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------

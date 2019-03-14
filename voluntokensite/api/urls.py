@@ -49,13 +49,20 @@ urlpatterns = [
 
 	#BUSINESS API ROUTES
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
-	path('get_coupon/<int:coupon_id>', views.get_coupon.as_view(), name='get_coupon'),
+	path('get_all_coupon/', views.get_all_coupon.as_view(), name='get_all_coupon'),
+	path('get_all_business/', views.get_all_business.as_view(), name='get_all_business'),
+
 	path('get_all_business_discount_coupon/<int:parent_business_id>', views.get_all_business_discount_coupon.as_view(), name='get_all_business_discount_coupon'),
 	path('get_all_business_donation_coupon/<int:parent_business_id>', views.get_all_business_donation_coupon.as_view(), name='get_all_business_donation_coupon'),
-	path('get_all_coupon', views.get_all_coupon.as_view(), name='get_all_coupon'),
-
 	path('get_business/<int:business_id>', views.get_business.as_view(), name='get_business'),
-	path('get_all_business', views.get_all_business.as_view(), name='get_all_business'),
+	path('get_coupon/<int:coupon_id>', views.get_coupon.as_view(), name='get_coupon'),
+	
+
+
+	#POST Request
+	path('make_transcation_discount/', views.make_transcation_discount.as_view(), name='make_transcation_discount')
+	
+	
 
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
 

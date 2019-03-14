@@ -30,7 +30,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from NGO.models   import event, org, event_registration_stub
-from BUSINESS.models import business, coupon
+from BUSINESS.models import business, coupon, transaction_stub
 from users.models import CustomUser
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
@@ -161,6 +161,66 @@ class register_user_for_event(generics.CreateAPIView):
 		else:
 			raise Http404#not sure if http404 error is appropriate
 
+# class make_transcation_discount(generics.CreateAPIView):
+# 	queryset         = transaction_stub.objects.all()
+# 	serializer_class = serializers.TransactionStubSerializer
+
+# 	def create(self, request):
+# 		coupon_id       = request.data['coupon_id']
+# 		try:
+# 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
+# 		except:
+# 			return Response(data ={'error_message':'not donation', 'success':False})
+
+# 		business_agent  = coupon_instance.parent_business
+# 		coupon_cost     = coupon_instance.token_cost
+# 		volunteer       = request.user
+# 		volunteer_funds = volunteer.volunteer_token
+
+# 		if (volunteer_funds >= coupon_cost):
+# 			volunteer_funds                = volunteer_funds - coupon_cost
+# 			volunteer.volunteer_token      = volunteer_funds
+# 			business_agent.donation_tokens += coupon_cost
+# 			serializer = self.get_serializer(data=request.data)
+# 			serializer.is_valid(raise_exception=True)
+# 			self.perform_create(serializer)
+# 			business_agent.save()
+# 			volunteer.save()
+# 			return Response(data ={'error_message':'none', 'success':True})
+# 		else:
+# 			return Response(data = {'error message':'insufficient funds', 'success':False})
+	
+# 	def perform_create(self, serializer):
+# 		coupon_id       = self.request.data['coupon_id']
+# 		coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
+# 		business_agent  = coupon_instance.parent_business
+# 		self.request.data['parent_business'] = business_agent
+# 		serializer.save(parent_volunteer=self.request.user, parent_business = business_agent)
+
+class make_transcation_discount(APIView):
+	def post(self, request):
+		coupon_id       = request.data['coupon_id']
+		try:
+			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
+		except:
+			return Response(data ={'error_message':'not donation', 'success':False})
+
+		business_agent  = coupon_instance.parent_business
+		coupon_cost     = coupon_instance.token_cost
+		volunteer       = request.user
+		volunteer_funds = volunteer.volunteer_token
+
+		if (volunteer_funds >= coupon_cost):
+			volunteer_funds                = volunteer_funds - coupon_cost
+			volunteer.volunteer_token      = volunteer_funds
+			business_agent.donation_tokens += coupon_cost
+			stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+			stub.save()
+			business_agent.save()
+			volunteer.save()
+			return Response(data ={'error_message':'none', 'success':True})
+		else:
+			return Response(data = {'error message':'insufficient funds', 'success':False})
 
 class is_user_registered_for_event(APIView):
 	def get(self, request, **kwargs):
@@ -170,6 +230,7 @@ class is_user_registered_for_event(APIView):
 			return Response(data={'is_user_registered_for_event':False})
 		else:
 			return Response(data={'is_user_registered_for_event':True})
+
 
 
 class unregister_user_for_event(generics.DestroyAPIView):
@@ -256,4 +317,6 @@ class get_all_coupon(generics.ListAPIView):
 	permission_classes = []
 	queryset = coupon.objects.filter(is_active=True)
 	serializer_class = serializers.CouponSerializer
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
