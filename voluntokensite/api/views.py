@@ -145,8 +145,8 @@ class get_all_my_event(generics.ListAPIView):
 class get_event_registered_users(generics.ListAPIView):
 	serializer_class = serializers.UserVolunteerSerializer
 	def get_queryset(self):
-		parent_event_data    = self.request.data['parent_event']
-		registration_stubs  = event_registration_stub.objects.filter(parent_event=parent_event_data)
+		event_id    = self.kwargs['event_id']
+		registration_stubs  = event_registration_stub.objects.filter(parent_event=event_id)
 		user_ids            = [x.parent_volunteer.id for x in registration_stubs]
 		return CustomUser.objects.filter(id__in=user_ids, is_public = True)
 		
@@ -163,7 +163,7 @@ class register_user_for_event(generics.CreateAPIView):
 
 
 class is_user_registered_for_event(APIView):
-	def get(self, request):
+	def post(self, request):
 		parent_event_data = request.data['parent_event']
 		#if no registration stubs corresponding to parent_event and user, then return false, otherwise true
 		if not event_registration_stub.objects.filter(parent_volunteer = request.user, parent_event=parent_event_data):

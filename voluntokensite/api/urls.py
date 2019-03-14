@@ -26,18 +26,25 @@ urlpatterns = [
 
 	#NGO API ROUTES
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
-	path('get_event/<int:event_id>', views.get_event.as_view(), name='get_event'),
-	path('get_all_ngo_event/<int:parent_ngo_id>', views.get_all_ngo_event.as_view(), name='get_all_ngo_event'),
-	path('get_all_event', views.get_all_event.as_view(), name='get_all_event'),
+	#GET Requests
+	path('get_all_event/', views.get_all_event.as_view(), name='get_all_event'),
+	path('get_all_ngo/', views.get_all_ngo.as_view(), name='get_all_ngo'),
 
+	path('get_all_ngo_event/<int:parent_ngo_id>', views.get_all_ngo_event.as_view(), name='get_all_ngo_event'),
 	path('get_ngo/<int:ngo_id>', views.get_ngo.as_view(), name='get_ngo'),
-	path('get_all_ngo', views.get_all_ngo.as_view(), name='get_all_ngo'),
+	path('get_event/<int:event_id>', views.get_event.as_view(), name='get_event'),
+	path('get_event_registered_users/<int:event_id>', views.get_event_registered_users.as_view(), name='get_event_registered_users'),
 	
-	path('get_event_registered_users/', views.get_event_registered_users.as_view(), name='get_event_registered_users'),
+	#self.request.user
 	path('get_all_my_event/', views.get_all_my_event.as_view(), name='get_all_my_event'),
 	path('is_user_registered_for_event/', views.is_user_registered_for_event.as_view(), name='is_user_registered_for_event'),
-	path('signup_user_for_event/', views.register_user_for_event.as_view(), name='register_user_for_event'),
+	
+	#DELETE Request
 	path('signoff_user_for_event/', views.unregister_user_for_event.as_view(), name='unregister_user_for_event'),
+
+	#POST Request
+	path('signup_user_for_event/', views.register_user_for_event.as_view(), name='register_user_for_event'),
+	
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
 
 	#BUSINESS API ROUTES
