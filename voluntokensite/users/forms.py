@@ -10,13 +10,13 @@ class CustomUserCreationForm_Admin(UserCreationForm):
 
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token',  'parent_ngo',  'parent_business')
+        fields = ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token',  'parent_ngo',  'parent_business', 'is_public', 'is_active', 'volunteer_hour')
 
 class CustomUserChangeForm_Admin(UserChangeForm):
 
     class Meta(UserChangeForm):
         model = CustomUser
-        fields = ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'parent_ngo',  'parent_business')
+        fields = ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'parent_ngo',  'parent_business', 'is_public', 'is_active', 'volunteer_hour')
 #----------------------------------------------------------------------------------------------------------------------------------------------------      
 
 #Volunteer

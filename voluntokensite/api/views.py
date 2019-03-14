@@ -148,7 +148,7 @@ class get_event_registered_users(generics.ListAPIView):
 		parent_event_data    = self.request.data['parent_event']
 		registration_stubs  = event_registration_stub.objects.filter(parent_event=parent_event_data)
 		user_ids            = [x.parent_volunteer.id for x in registration_stubs]
-		return CustomUser.objects.filter(id__in=user_ids)
+		return CustomUser.objects.filter(id__in=user_ids, is_public = True)
 		
 
 class register_user_for_event(generics.CreateAPIView):
@@ -161,6 +161,15 @@ class register_user_for_event(generics.CreateAPIView):
 		else:
 			raise Http404#not sure if http404 error is appropriate
 
+
+class is_user_registered_for_event(APIView):
+	def get(self, request):
+		parent_event_data = request.data['parent_event']
+		#if no registration stubs corresponding to parent_event and user, then return false, otherwise true
+		if not event_registration_stub.objects.filter(parent_volunteer = request.user, parent_event=parent_event_data):
+			return Response(data={'is_user_registered_for_event':False})
+		else:
+			return Response(data={'is_user_registered_for_event':True})
 
 
 class unregister_user_for_event(generics.DestroyAPIView):

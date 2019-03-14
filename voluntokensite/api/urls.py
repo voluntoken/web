@@ -35,6 +35,7 @@ urlpatterns = [
 	
 	path('get_event_registered_users/', views.get_event_registered_users.as_view(), name='get_event_registered_users'),
 	path('get_all_my_event/', views.get_all_my_event.as_view(), name='get_all_my_event'),
+	path('is_user_registered_for_event/', views.is_user_registered_for_event.as_view(), name='is_user_registered_for_event'),
 	path('signup_user_for_event/', views.register_user_for_event.as_view(), name='register_user_for_event'),
 	path('signoff_user_for_event/', views.unregister_user_for_event.as_view(), name='unregister_user_for_event'),
 	#----------------------------------------------------------------------------------------------------------------------------------------------------

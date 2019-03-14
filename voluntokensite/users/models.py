@@ -25,9 +25,12 @@ class CustomUser(AbstractUser):
     volunteer_hour        = models.FloatField(null=True)
 
     #Parent References
-    parent_business = models.ForeignKey('BUSINESS.business', on_delete=models.CASCADE, null=True)
-    parent_ngo      = models.ForeignKey('NGO.org', on_delete=models.CASCADE, null=True)
+    parent_business = models.ForeignKey('BUSINESS.business', on_delete=models.CASCADE, null=True, blank=True)
+    parent_ngo      = models.ForeignKey('NGO.org', on_delete=models.CASCADE, null=True, blank=True)
      
+
+
+    #Keeping 
     def __str__(self):
         return self.username
 #----------------------------------------------------------------------------------------------------------------------------------------------------
