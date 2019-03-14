@@ -37,7 +37,7 @@ urlpatterns = [
 	
 	#self.request.user
 	path('get_all_my_event/', views.get_all_my_event.as_view(), name='get_all_my_event'),
-	path('is_user_registered_for_event/', views.is_user_registered_for_event.as_view(), name='is_user_registered_for_event'),
+	path('is_user_registered_for_event/<int:event_id>', views.is_user_registered_for_event.as_view(), name='is_user_registered_for_event'),
 	
 	#DELETE Request
 	path('signoff_user_for_event/', views.unregister_user_for_event.as_view(), name='unregister_user_for_event'),

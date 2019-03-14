@@ -163,10 +163,10 @@ class register_user_for_event(generics.CreateAPIView):
 
 
 class is_user_registered_for_event(APIView):
-	def post(self, request):
-		parent_event_data = request.data['parent_event']
+	def get(self, request, **kwargs):
+		event_id = kwargs['event_id']
 		#if no registration stubs corresponding to parent_event and user, then return false, otherwise true
-		if not event_registration_stub.objects.filter(parent_volunteer = request.user, parent_event=parent_event_data):
+		if not event_registration_stub.objects.filter(parent_volunteer = request.user, parent_event=event_id):
 			return Response(data={'is_user_registered_for_event':False})
 		else:
 			return Response(data={'is_user_registered_for_event':True})
