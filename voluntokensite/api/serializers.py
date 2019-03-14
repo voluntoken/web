@@ -2,7 +2,7 @@
 
 from users.models import CustomUser
 from rest_framework import serializers
-from NGO.models import event, org
+from NGO.models import event, org, event_registration_stub, checks_stub
 from BUSINESS.models import coupon, business
 
 #User AuthSerializer
@@ -11,11 +11,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
 	username = serializers.CharField()
 	password = serializers.CharField(write_only=True,
 									style={'input_type': 'password'})
-
+	
 	class Meta:
 		model = CustomUser
-#		fields = ('email', 'username')
-		fields = ('email', 'username', 'password')
+		fields = ('email', 'username', 'first_name', 'last_name', 'is_public', 'volunteer_role')
 		write_only_fields = ('password')
 
 	def create(self, validated_data):
@@ -29,9 +28,11 @@ class ChangeUserSerializer(serializers.ModelSerializer):
 		model = CustomUser
 
 class UserVolunteerSerializer(serializers.ModelSerializer):
+	registration_stubs = serializers.PrimaryKeyRelatedField(many=True, queryset=event_registration_stub.objects.all())
+	checks_stubs       = serializers.PrimaryKeyRelatedField(many=True, queryset=checks_stub.objects.all())
 	class Meta:
 		model = CustomUser
-		fields = ('first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role')
+		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -45,8 +46,19 @@ class EventSerializer(serializers.ModelSerializer):
 class NGOSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = org
-		fields = ('name', 'description', 'email', 'address')
+		fields = ('id', 'name', 'description', 'email', 'address')
 
+# class EventRegistrationStubSerializer(serializers.ModelSerializer):
+# 	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.username')
+# 	class Meta:
+# 		model = event_registration_stub
+# 		fields = ('id', 'parent_event', 'parent_volunteer', 'is_registered')
+class EventRegistrationStubSerializer(serializers.ModelSerializer):
+	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.id')
+	class Meta:
+		model = event_registration_stub
+		fields = ('id', 'parent_event', 'parent_volunteer')
+#
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -55,12 +67,12 @@ class NGOSerializer(serializers.ModelSerializer):
 class CouponSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = coupon
-		fields = ('name', 'description', 'is_donation', 'token_cost', 'parent_business', 'donation_val')
+		fields = ('id', 'name', 'description', 'is_donation', 'token_cost', 'parent_business', 'donation_val')
 
 class BusinessSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = business
-		fields = ('name', 'description', 'email', 'address')
+		fields = ('id', 'name', 'description', 'email', 'address')
 	
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------

@@ -14,7 +14,9 @@
 
 from users.models import CustomUser
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
+from NGO.permissions import IsParentVolunteerOrReadOnly
+
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
@@ -22,6 +24,7 @@ from rest_framework.views import APIView
 from api import serializers
 
 
+from django.http import Http404
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
@@ -30,6 +33,7 @@ from NGO.models   import event, org
 from BUSINESS.models import business, coupon
 from users.models import CustomUser
 from api.serializers import EventSerializer
+from django.shortcuts import get_object_or_404
 
 #USER VIEWS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,7 +73,10 @@ class get_ngo(generics.RetrieveAPIView):
 	permission_classes = []
 	def get_object(self):
 		ngo_id = self.kwargs['ngo_id']
-		return org.objects.get(id=ngo_id, is_active=True)
+		try:
+			return org.objects.get(id=ngo_id, is_active=True)
+		except org.DoesNotExist:
+			raise Http404
 	serializer_class = serializers.NGOSerializer
 
 class get_all_ngo(generics.ListAPIView):
@@ -95,7 +102,11 @@ class get_event(generics.RetrieveAPIView):
 	permission_classes = []
 	def get_object(self):
 		event_id = self.kwargs['event_id']
-		return event.objects.get(id=event_id, is_active=True)
+		try:
+			return event.objects.get(id=event_id, is_active=True)
+		except event.DoesNotExist:
+			raise Http404
+
 	serializer_class = serializers.EventSerializer
 
 
@@ -113,6 +124,33 @@ class get_all_event(generics.ListAPIView):
 # 	def get_queryset(self):
 # 		event_id = self.kwargs['event_id']
 # 		return event.objects.filter(id=event_id, is_active=True)
+
+
+class register_user_for_event(generics.CreateAPIView):
+	# #remove when running
+	authentication_classes = []
+	permission_classes = []
+	# #authentication_classes = []
+	# permission_classes = (IsAuthenticatedOrReadOnly, IsParentVolunteerOrReadOnly)
+	serializer_class = serializers.EventRegistrationStubSerializer
+	# def perform_create(self, serializer):
+	# 	serializer.save(parent_volunteer = self.request.user)
+	
+	def perform_create(self, serializer):
+		event_id = self.kwargs['event_id']
+		print("inside api\n")
+		print(str(event_id))
+		print(str(self.request.user.id))
+		serializer.save(parent_volunteer = self.request.user.id)
+		serializer.save(parent_event = 1)
+
+
+# class unregister_user_for_event(generics.DestroyAPIView):
+
+
+
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #NGO API Routes
@@ -123,7 +161,10 @@ class get_business(generics.RetrieveAPIView):
 	permission_classes = []
 	def get_object(self):
 		business_id = self.kwargs['business_id']
-		return business.objects.get(id=business_id, is_active=True)
+		try:
+			return business.objects.get(id=business_id, is_active=True)
+		except business.DoesNotExist:
+			raise Http404
 	serializer_class = serializers.BusinessSerializer
 
 
@@ -159,8 +200,11 @@ class get_coupon(generics.RetrieveAPIView):
 	authentication_classes = []
 	permission_classes = []
 	def get_object(self):
-		coupon_id = self.kwargs['coupon_id']
-		return coupon.objects.get(id=coupon_id, is_active=True)
+		coupon_id     = self.kwargs['coupon_id']  
+		try:
+			return coupon.objects.get(id=coupon_id, is_active=True)
+		except coupon.DoesNotExist:
+			raise Http404
 	serializer_class = serializers.CouponSerializer
 
 

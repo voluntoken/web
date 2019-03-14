@@ -20,8 +20,9 @@ class CustomUser(AbstractUser):
     is_active  = models.BooleanField(default = True)
     
     #Volunteer Specific
-    volunteer_token = models.IntegerField(null=True)
-    volunteer_role  = models.CharField(max_length=2, null=True)
+    volunteer_token       = models.FloatField(null=True)
+    volunteer_role        = models.CharField(max_length=2, null=True, default='VO')
+    volunteer_hour        = models.FloatField(null=True)
 
     #Parent References
     parent_business = models.ForeignKey('BUSINESS.business', on_delete=models.CASCADE, null=True)
