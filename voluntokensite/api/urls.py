@@ -33,7 +33,10 @@ urlpatterns = [
 	path('get_ngo/<int:ngo_id>', views.get_ngo.as_view(), name='get_ngo'),
 	path('get_all_ngo', views.get_all_ngo.as_view(), name='get_all_ngo'),
 	
-	path('register_user_for_event/<int:event_id>', views.register_user_for_event.as_view(), name='register_user_for_event'),
+	path('get_event_registered_users/', views.get_event_registered_users.as_view(), name='get_event_registered_users'),
+	path('get_all_my_event/', views.get_all_my_event.as_view(), name='get_all_my_event'),
+	path('signup_user_for_event/', views.register_user_for_event.as_view(), name='register_user_for_event'),
+	path('signoff_user_for_event/', views.unregister_user_for_event.as_view(), name='unregister_user_for_event'),
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
 
 	#BUSINESS API ROUTES

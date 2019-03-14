@@ -29,11 +29,11 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from NGO.models   import event, org
+from NGO.models   import event, org, event_registration_stub
 from BUSINESS.models import business, coupon
 from users.models import CustomUser
-from api.serializers import EventSerializer
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 #USER VIEWS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -125,31 +125,64 @@ class get_all_event(generics.ListAPIView):
 # 		event_id = self.kwargs['event_id']
 # 		return event.objects.filter(id=event_id, is_active=True)
 
+# class get_registration_stub_user(generics.ListAPIView):
+# 	def get_queryset(self):
+
+
+# class get_event_registered_users(generics.ListAPIView):
+# 	queryset         = 
+# 	serializer_class = UserSerializer
+
+
+
+class get_all_my_event(generics.ListAPIView):
+	serializer_class = serializers.EventSerializer
+	def get_queryset(self):
+		registration_stubs  = event_registration_stub.objects.filter(parent_volunteer=self.request.user)
+		event_ids           = [x.parent_event.id for x in registration_stubs]
+		return event.objects.filter(id__in=event_ids)
+
+class get_event_registered_users(generics.ListAPIView):
+	serializer_class = serializers.UserVolunteerSerializer
+	def get_queryset(self):
+		parent_event_data    = self.request.data['parent_event']
+		registration_stubs  = event_registration_stub.objects.filter(parent_event=parent_event_data)
+		user_ids            = [x.parent_volunteer.id for x in registration_stubs]
+		return CustomUser.objects.filter(id__in=user_ids)
+		
 
 class register_user_for_event(generics.CreateAPIView):
-	# #remove when running
-	authentication_classes = []
-	permission_classes = []
-	# #authentication_classes = []
-	# permission_classes = (IsAuthenticatedOrReadOnly, IsParentVolunteerOrReadOnly)
+	queryset         = event_registration_stub.objects.all()
 	serializer_class = serializers.EventRegistrationStubSerializer
-	# def perform_create(self, serializer):
-	# 	serializer.save(parent_volunteer = self.request.user)
-	
 	def perform_create(self, serializer):
-		event_id = self.kwargs['event_id']
-		print("inside api\n")
-		print(str(event_id))
-		print(str(self.request.user.id))
-		serializer.save(parent_volunteer = self.request.user.id)
-		serializer.save(parent_event = 1)
-
-
-# class unregister_user_for_event(generics.DestroyAPIView):
+		parent_event_data     = self.request.data['parent_event']
+		if not event_registration_stub.objects.filter(parent_volunteer = self.request.user, parent_event=parent_event_data):
+			serializer.save(parent_volunteer=self.request.user)
+		else:
+			raise Http404#not sure if http404 error is appropriate
 
 
 
+class unregister_user_for_event(generics.DestroyAPIView):
+	serializer_class = serializers.EventRegistrationStubSerializer
+	def get_object(self):
+		try:
+			parent_event_data  = self.request.data['parent_event']
+			return event_registration_stub.objects.filter(parent_volunteer=self.request.user, parent_event=parent_event_data).first()
+		except:
+			raise Http404
+		
 
+	# def delete(self, request, format=None):
+	# 	instance = self.objects.filter(parent_volunteer=self.request.user, parent_event=1).first()
+	# 	instance.delete()
+	# 	return Response(status=status.HTTP_204_NO_CONTENT)
+	# # def get_queryset(self):
+	# 	queryset = event_registration_stub.objects.filter(parent_volunteer = self.request.user, parent_event=self.kwargs['parent_event'])
+	# def destroy(self):
+	# 	instance = self.get_object()
+	# 	self.perform_destroy(instance)
+	# 	return Response(status=status.HTTP_204_NO_CONTENT)
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 

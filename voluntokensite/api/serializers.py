@@ -14,7 +14,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 	
 	class Meta:
 		model = CustomUser
-		fields = ('email', 'username', 'first_name', 'last_name', 'is_public', 'volunteer_role')
+		fields = ('email', 'username', 'password', 'first_name', 'last_name', 'is_public', 'volunteer_role')
 		write_only_fields = ('password')
 
 	def create(self, validated_data):
@@ -28,8 +28,6 @@ class ChangeUserSerializer(serializers.ModelSerializer):
 		model = CustomUser
 
 class UserVolunteerSerializer(serializers.ModelSerializer):
-	registration_stubs = serializers.PrimaryKeyRelatedField(many=True, queryset=event_registration_stub.objects.all())
-	checks_stubs       = serializers.PrimaryKeyRelatedField(many=True, queryset=checks_stub.objects.all())
 	class Meta:
 		model = CustomUser
 		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role')
@@ -48,17 +46,27 @@ class NGOSerializer(serializers.ModelSerializer):
 		model = org
 		fields = ('id', 'name', 'description', 'email', 'address')
 
-# class EventRegistrationStubSerializer(serializers.ModelSerializer):
+
+# class EventRegistrationStubSerializer(serializers.Serializer):
 # 	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.username')
-# 	class Meta:
-# 		model = event_registration_stub
-# 		fields = ('id', 'parent_event', 'parent_volunteer', 'is_registered')
+# 	parent_event     = serializers.IntegerField()
+
+# 	def create(self, validated_data):
+# 		return event_registration_stub.objects.create(**validated_data)
+
+# 	def update(self, instance, validated_data):
+# 		instance.parent_volunteer = validated_data.get('parent_volunteer', instance.parent_volunteer)
+# 		instance.parent_event     = validated_data.get('parent_event', instance.parent_event)
+# 		isntance.save()
+# 		return instance
+
+
 class EventRegistrationStubSerializer(serializers.ModelSerializer):
 	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.id')
 	class Meta:
 		model = event_registration_stub
 		fields = ('id', 'parent_event', 'parent_volunteer')
-#
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
