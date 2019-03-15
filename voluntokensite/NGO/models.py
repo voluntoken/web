@@ -1,6 +1,7 @@
 from django.db import models
 from users.models import CustomUser
 from datetime import datetime
+from random import randint
 import os
 
 
@@ -16,7 +17,7 @@ class org(models.Model):
 	email       = models.EmailField(max_length = 200)
 	address     = models.CharField(max_length = 500)
 	is_active   = models.BooleanField(default=True)
-	volunteer_hour = models.FloatField(null=True)
+	volunteer_hour = models.FloatField(default=0.0)
 	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	def __str__(self):
@@ -27,16 +28,18 @@ class org(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class event(models.Model):
 	#Profile Info
-	name        = models.CharField(max_length = 200)
-	description = models.CharField(max_length = 2500)
+	name         = models.CharField(max_length = 200)
+	description  = models.CharField(max_length = 2500)
 	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	parent_ngo  = models.ForeignKey(org, on_delete=models.CASCADE)
-	qr_code     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	is_active   = models.BooleanField(default=True)
+	parent_ngo   = models.ForeignKey(org, on_delete=models.CASCADE)
+	qr_code      = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+	pin_checkin  = models.IntegerField(default=randint(1000,9999))
+	pin_checkout = models.IntegerField(default=randint(1000,9999))
+	is_active    = models.BooleanField(default=True)
 
 	#Timing
-	start_time  = models.DateTimeField(default=datetime.now)
-	end_time    = models.DateTimeField(default=datetime.now)
+	start_time   = models.DateTimeField(default=datetime.now)
+	end_time     = models.DateTimeField(default=datetime.now)
 
 
 	# #NEEDS TESTING -------------------------------------------------
@@ -54,7 +57,7 @@ class event(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class checks_stub(models.Model):
 	is_check_in      = models.BooleanField(default = True) #True: Check IN, False: Check OUT
-	time             = models.DateTimeField()
+	time             = models.DateTimeField(default=datetime.now)
 	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 	

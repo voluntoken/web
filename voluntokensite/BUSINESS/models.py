@@ -1,5 +1,6 @@
 from django.db import models
 from users.models  import CustomUser
+from random import randint
 import os
 
 #image stuff
@@ -21,10 +22,10 @@ class business(models.Model):
 	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	#Donations, Discounts Metrics
-	donation_tokens = models.FloatField() 
-	discount_tokens = models.FloatField()
+	donation_tokens = models.FloatField(default=0.0) 
+	discount_tokens = models.FloatField(default=0.0)
 	qr_code         = models.ImageField(upload_to= get_image_path, blank=True, null=True)
-
+	pin             = models.IntegerField(default=randint(1000,9999))
 	def __str__(self):
 		return self.name
 #----------------------------------------------------------------------------------------------------------------------------------------------------

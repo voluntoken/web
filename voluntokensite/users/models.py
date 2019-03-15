@@ -12,7 +12,8 @@ def get_image_path(instance, filename):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class CustomUser(AbstractUser):
     #Personal INFO
-    #picture    = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+    profile_pic   = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+ 
     first_name = models.CharField(max_length = 40)
     last_name  = models.CharField(max_length = 40)
     user_type  = models.CharField(max_length=2, default='VO')
@@ -20,9 +21,9 @@ class CustomUser(AbstractUser):
     is_active  = models.BooleanField(default = True)
     
     #Volunteer Specific
-    volunteer_token       = models.FloatField(null=True)
+    volunteer_token       = models.FloatField(default=0.0)
     volunteer_role        = models.CharField(max_length=2, null=True, default='DI')
-    volunteer_hour        = models.FloatField(null=True)
+    volunteer_hour        = models.FloatField(default=0.0)
 
     #Parent References
     parent_business = models.ForeignKey('BUSINESS.business', on_delete=models.CASCADE, null=True, blank=True)

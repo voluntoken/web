@@ -22,6 +22,9 @@ urlpatterns = [
 	url(r'^auth/logout/$',
 		views.LogoutUserAPIView.as_view(),
 		name='auth_user_logout'),
+
+	#GET
+	path('get_user/', views.get_user.as_view(), name='get_user'),
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
 
 	#NGO API ROUTES
@@ -49,6 +52,7 @@ urlpatterns = [
 
 	#BUSINESS API ROUTES
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
+	#GET Requests
 	path('get_all_coupon/', views.get_all_coupon.as_view(), name='get_all_coupon'),
 	path('get_all_business/', views.get_all_business.as_view(), name='get_all_business'),
 
@@ -56,12 +60,12 @@ urlpatterns = [
 	path('get_all_business_donation_coupon/<int:parent_business_id>', views.get_all_business_donation_coupon.as_view(), name='get_all_business_donation_coupon'),
 	path('get_business/<int:business_id>', views.get_business.as_view(), name='get_business'),
 	path('get_coupon/<int:coupon_id>', views.get_coupon.as_view(), name='get_coupon'),
-	
+	path('is_verified_donation/<int:coupon_id>/<int:pin_try>', views.is_verified_donation.as_view(), name='is_verified_donation'),
 
 
-	#POST Request
-	path('make_transcation_discount/', views.make_transcation_discount.as_view(), name='make_transcation_discount')
-	
+	#POST Request, self.request.user
+	path('make_transcation_discount/', views.make_transcation_discount.as_view(), name='make_transcation_discount'),
+	path('make_transcation_donation/', views.make_transcation_donation.as_view(), name='make_transcation_donation'),
 	
 
 	#----------------------------------------------------------------------------------------------------------------------------------------------------

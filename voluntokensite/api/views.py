@@ -63,21 +63,24 @@ class LogoutUserAPIView(APIView):
 		# simply delete the token to force a login
 		request.user.auth_token.delete()
 		return Response(status=status.HTTP_200_OK)
+
+class get_user(generics.RetrieveAPIView):
+	serializer_class = serializers.UserVolunteerSerializer
+	def get_object(self):
+		try:
+			return CustomUser.objects.get(id=self.request.user.id)
+		except:
+			raise Http404
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #NGO API Routes
 #----------------------------------------------------------------------------------------------------------------------------------------------------
-class get_ngo(generics.RetrieveAPIView):
+class get_all_event(generics.ListAPIView):
 	#setting authentication, permission to empty!
 	authentication_classes = []
 	permission_classes = []
-	def get_object(self):
-		ngo_id = self.kwargs['ngo_id']
-		try:
-			return org.objects.get(id=ngo_id, is_active=True)
-		except org.DoesNotExist:
-			raise Http404
-	serializer_class = serializers.NGOSerializer
+	queryset = event.objects.filter(is_active=True)
+	serializer_class = serializers.EventSerializer
 
 class get_all_ngo(generics.ListAPIView):
 	#setting authentication, permission to empty!
@@ -96,6 +99,18 @@ class get_all_ngo_event(generics.ListAPIView):
 		return event.objects.filter(parent_ngo=parent_ngo_id, is_active=True)
 	serializer_class = serializers.EventSerializer
 
+class get_ngo(generics.RetrieveAPIView):
+	#setting authentication, permission to empty!
+	authentication_classes = []
+	permission_classes = []
+	def get_object(self):
+		ngo_id = self.kwargs['ngo_id']
+		try:
+			return org.objects.get(id=ngo_id, is_active=True)
+		except org.DoesNotExist:
+			raise Http404
+	serializer_class = serializers.NGOSerializer
+
 class get_event(generics.RetrieveAPIView):
 	#setting authentication, permission to empty!
 	authentication_classes = []
@@ -110,37 +125,6 @@ class get_event(generics.RetrieveAPIView):
 	serializer_class = serializers.EventSerializer
 
 
-class get_all_event(generics.ListAPIView):
-	#setting authentication, permission to empty!
-	authentication_classes = []
-	permission_classes = []
-	queryset = event.objects.filter(is_active=True)
-	serializer_class = serializers.EventSerializer
-
-# class get_all_event_users(generics.ListAPIView):
-# 	authentication_classes = []
-# 	permission_classes = []
-
-# 	def get_queryset(self):
-# 		event_id = self.kwargs['event_id']
-# 		return event.objects.filter(id=event_id, is_active=True)
-
-# class get_registration_stub_user(generics.ListAPIView):
-# 	def get_queryset(self):
-
-
-# class get_event_registered_users(generics.ListAPIView):
-# 	queryset         = 
-# 	serializer_class = UserSerializer
-
-
-
-class get_all_my_event(generics.ListAPIView):
-	serializer_class = serializers.EventSerializer
-	def get_queryset(self):
-		registration_stubs  = event_registration_stub.objects.filter(parent_volunteer=self.request.user)
-		event_ids           = [x.parent_event.id for x in registration_stubs]
-		return event.objects.filter(id__in=event_ids)
 
 class get_event_registered_users(generics.ListAPIView):
 	serializer_class = serializers.UserVolunteerSerializer
@@ -148,79 +132,15 @@ class get_event_registered_users(generics.ListAPIView):
 		event_id    = self.kwargs['event_id']
 		registration_stubs  = event_registration_stub.objects.filter(parent_event=event_id)
 		user_ids            = [x.parent_volunteer.id for x in registration_stubs]
-		return CustomUser.objects.filter(id__in=user_ids, is_public = True)
+		return CustomUser.objects.filter(id__in=user_ids, is_public = True, is_active=True)
+
+class get_all_my_event(generics.ListAPIView):
+	serializer_class = serializers.EventSerializer
+	def get_queryset(self):
+		registration_stubs  = event_registration_stub.objects.filter(parent_volunteer=self.request.user)
+		event_ids           = [x.parent_event.id for x in registration_stubs]
+		return event.objects.filter(id__in=event_ids)
 		
-
-class register_user_for_event(generics.CreateAPIView):
-	queryset         = event_registration_stub.objects.all()
-	serializer_class = serializers.EventRegistrationStubSerializer
-	def perform_create(self, serializer):
-		parent_event_data     = self.request.data['parent_event']
-		if not event_registration_stub.objects.filter(parent_volunteer = self.request.user, parent_event=parent_event_data):
-			serializer.save(parent_volunteer=self.request.user)
-		else:
-			raise Http404#not sure if http404 error is appropriate
-
-# class make_transcation_discount(generics.CreateAPIView):
-# 	queryset         = transaction_stub.objects.all()
-# 	serializer_class = serializers.TransactionStubSerializer
-
-# 	def create(self, request):
-# 		coupon_id       = request.data['coupon_id']
-# 		try:
-# 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
-# 		except:
-# 			return Response(data ={'error_message':'not donation', 'success':False})
-
-# 		business_agent  = coupon_instance.parent_business
-# 		coupon_cost     = coupon_instance.token_cost
-# 		volunteer       = request.user
-# 		volunteer_funds = volunteer.volunteer_token
-
-# 		if (volunteer_funds >= coupon_cost):
-# 			volunteer_funds                = volunteer_funds - coupon_cost
-# 			volunteer.volunteer_token      = volunteer_funds
-# 			business_agent.donation_tokens += coupon_cost
-# 			serializer = self.get_serializer(data=request.data)
-# 			serializer.is_valid(raise_exception=True)
-# 			self.perform_create(serializer)
-# 			business_agent.save()
-# 			volunteer.save()
-# 			return Response(data ={'error_message':'none', 'success':True})
-# 		else:
-# 			return Response(data = {'error message':'insufficient funds', 'success':False})
-	
-# 	def perform_create(self, serializer):
-# 		coupon_id       = self.request.data['coupon_id']
-# 		coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
-# 		business_agent  = coupon_instance.parent_business
-# 		self.request.data['parent_business'] = business_agent
-# 		serializer.save(parent_volunteer=self.request.user, parent_business = business_agent)
-
-class make_transcation_discount(APIView):
-	def post(self, request):
-		coupon_id       = request.data['coupon_id']
-		try:
-			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False)
-		except:
-			return Response(data ={'error_message':'not donation', 'success':False})
-
-		business_agent  = coupon_instance.parent_business
-		coupon_cost     = coupon_instance.token_cost
-		volunteer       = request.user
-		volunteer_funds = volunteer.volunteer_token
-
-		if (volunteer_funds >= coupon_cost):
-			volunteer_funds                = volunteer_funds - coupon_cost
-			volunteer.volunteer_token      = volunteer_funds
-			business_agent.donation_tokens += coupon_cost
-			stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
-			stub.save()
-			business_agent.save()
-			volunteer.save()
-			return Response(data ={'error_message':'none', 'success':True})
-		else:
-			return Response(data = {'error message':'insufficient funds', 'success':False})
 
 class is_user_registered_for_event(APIView):
 	def get(self, request, **kwargs):
@@ -233,6 +153,7 @@ class is_user_registered_for_event(APIView):
 
 
 
+
 class unregister_user_for_event(generics.DestroyAPIView):
 	serializer_class = serializers.EventRegistrationStubSerializer
 	def get_object(self):
@@ -241,35 +162,25 @@ class unregister_user_for_event(generics.DestroyAPIView):
 			return event_registration_stub.objects.filter(parent_volunteer=self.request.user, parent_event=parent_event_data).first()
 		except:
 			raise Http404
-		
-
-	# def delete(self, request, format=None):
-	# 	instance = self.objects.filter(parent_volunteer=self.request.user, parent_event=1).first()
-	# 	instance.delete()
-	# 	return Response(status=status.HTTP_204_NO_CONTENT)
-	# # def get_queryset(self):
-	# 	queryset = event_registration_stub.objects.filter(parent_volunteer = self.request.user, parent_event=self.kwargs['parent_event'])
-	# def destroy(self):
-	# 	instance = self.get_object()
-	# 	self.perform_destroy(instance)
-	# 	return Response(status=status.HTTP_204_NO_CONTENT)
-
+class register_user_for_event(generics.CreateAPIView):
+	queryset         = event_registration_stub.objects.all()
+	serializer_class = serializers.EventRegistrationStubSerializer
+	def perform_create(self, serializer):
+		parent_event_data     = self.request.data['parent_event']
+		if not event_registration_stub.objects.filter(parent_volunteer = self.request.user, parent_event=parent_event_data):
+			serializer.save(parent_volunteer=self.request.user)
+		else:
+			raise Http404#not sure if http404 error is appropriate
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #NGO API Routes
 #----------------------------------------------------------------------------------------------------------------------------------------------------
-class get_business(generics.RetrieveAPIView):
+class get_all_coupon(generics.ListAPIView):
 	#setting authentication, permission to empty!
 	authentication_classes = []
 	permission_classes = []
-	def get_object(self):
-		business_id = self.kwargs['business_id']
-		try:
-			return business.objects.get(id=business_id, is_active=True)
-		except business.DoesNotExist:
-			raise Http404
-	serializer_class = serializers.BusinessSerializer
-
+	queryset = coupon.objects.filter(is_active=True)
+	serializer_class = serializers.CouponSerializer
 
 class get_all_business(generics.ListAPIView):
 	#setting authentication, permission to empty!
@@ -277,6 +188,7 @@ class get_all_business(generics.ListAPIView):
 	permission_classes = []
 	queryset = business.objects.filter(is_active=True)
 	serializer_class = serializers.BusinessSerializer
+
 
 class get_all_business_discount_coupon(generics.ListAPIView):
 	#setting authentication, permission to empty!
@@ -298,6 +210,22 @@ class get_all_business_donation_coupon(generics.ListAPIView):
 		return coupon.objects.filter(parent_business=parent_business_id, is_active=True, is_donation=True)
 	serializer_class = serializers.CouponSerializer
 
+
+
+class get_business(generics.RetrieveAPIView):
+	#setting authentication, permission to empty!
+	authentication_classes = []
+	permission_classes = []
+	def get_object(self):
+		business_id = self.kwargs['business_id']
+		try:
+			return business.objects.get(id=business_id, is_active=True)
+		except business.DoesNotExist:
+			raise Http404
+	serializer_class = serializers.BusinessSerializer
+
+
+
 class get_coupon(generics.RetrieveAPIView):
 	#setting authentication, permission to empty!
 	authentication_classes = []
@@ -311,12 +239,70 @@ class get_coupon(generics.RetrieveAPIView):
 	serializer_class = serializers.CouponSerializer
 
 
-class get_all_coupon(generics.ListAPIView):
-	#setting authentication, permission to empty!
-	authentication_classes = []
-	permission_classes = []
-	queryset = coupon.objects.filter(is_active=True)
-	serializer_class = serializers.CouponSerializer
+class is_verified_donation(APIView):
+	def get(self, request, **kwargs):
+		coupon_id       = kwargs['coupon_id']
+		pin_try         = kwargs['pin_try']
+		try:
+			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
+		except:
+			return Response(data ={'error_message':'not donation', 'success':False})
+		business_agent  = coupon_instance.parent_business
+		correct_pin     = business_agent.pin
+		if (correct_pin == pin_try):
+			return Response(data ={'error_message':'none', 'success':True})
+		else:
+			return Response(data ={'error_message':'wrong pin', 'success':False})
 
+
+class make_transcation_donation(APIView):
+	def post(self, request):
+		coupon_id       = request.data['coupon_id']
+		try:
+			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
+		except:
+			return Response(data ={'error_message':'not donation', 'success':False})
+
+		business_agent  = coupon_instance.parent_business
+		coupon_cost     = coupon_instance.token_cost
+		volunteer       = request.user
+		volunteer_funds = volunteer.volunteer_token
+
+		if (volunteer_funds >= coupon_cost):
+			volunteer_funds                = volunteer_funds - coupon_cost
+			volunteer.volunteer_token      = volunteer_funds
+			business_agent.donation_tokens += coupon_cost
+			stub = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+			stub.save()
+			business_agent.save()
+			volunteer.save()
+			return Response(data ={'error_message':'none', 'success':True})
+		else:
+			return Response(data = {'error message':'insufficient funds', 'success':False})
+
+class make_transcation_discount(APIView):
+	def post(self, request):
+		coupon_id       = request.data['coupon_id']
+		try:
+			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False, is_active=True)
+		except:
+			return Response(data ={'error_message':'not donation', 'success':False})
+
+		business_agent  = coupon_instance.parent_business
+		coupon_cost     = coupon_instance.token_cost
+		volunteer       = request.user
+		volunteer_funds = volunteer.volunteer_token
+
+		if (volunteer_funds >= coupon_cost):
+			volunteer_funds                = volunteer_funds - coupon_cost
+			volunteer.volunteer_token      = volunteer_funds
+			business_agent.discount_tokens += coupon_cost
+			stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+			stub.save()
+			business_agent.save()
+			volunteer.save()
+			return Response(data ={'error_message':'none', 'success':True})
+		else:
+			return Response(data = {'error message':'insufficient funds', 'success':False})
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------
