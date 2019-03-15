@@ -183,6 +183,11 @@ class make_checkout(APIView):
 		new_hours_stub = event_hours_spent_stub.objects.create(parent_event=event_instance, parent_volunteer=self.request.user, hours=hours_spent)		
 		new_hours_stub.save()
 
+		#Update NGO Volunteer Hours
+		ngo_parent                 = event_instance.parent_ngo
+		ngo_parent.volunteer_hour += hours_spent 
+		ngo_parent.save()
+
 		#UPDATE CustomUser 
 		tokens_earned  = hours_spent*EXCHANGE_HOUR_TO_TOKEN
 		user_instance  = self.request.user
