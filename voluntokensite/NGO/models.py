@@ -2,6 +2,7 @@ from django.db import models
 from users.models import CustomUser
 from datetime import datetime
 from random import randint
+from django import forms
 import os
 
 
@@ -38,16 +39,16 @@ class event(models.Model):
 	is_active    = models.BooleanField(default=True)
 
 	#Timing
-	start_time   = models.DateTimeField(default=datetime.now)
-	end_time     = models.DateTimeField(default=datetime.now)
+	start_time   = models.DateTimeField(default=datetime.utcnow)
+	end_time     = models.DateTimeField(default=datetime.utcnow)
 
 
-	# #NEEDS TESTING -------------------------------------------------
-	# #Check ifstop_time - start_time is positive
-	# if (end_time - start_time).hours <= 0:
-	# 	raise forms.ValidationError("The end time of your event must be after the start time!")
+	#NEEDS TESTING -------------------------------------------------
+	#Check ifstop_time - start_time is positive
+	if  start_time >= end_time:
+		raise forms.ValidationError("The end time of your event must be after the start time!")
 
-	# #---------------------------------------------------------------
+	#---------------------------------------------------------------
 
 	def __str__(self):
 		return self.name
@@ -57,7 +58,7 @@ class event(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class checks_stub(models.Model):
 	is_check_in      = models.BooleanField(default = True) #True: Check IN, False: Check OUT
-	time             = models.DateTimeField(default=datetime.now)
+	time             = models.DateTimeField(default=datetime.utcnow)
 	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
 	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 	
@@ -73,3 +74,12 @@ class event_registration_stub(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 	# def __str__(self):
 	# 	return __str__(self.parent_event)
+
+
+#event_hours_spent_stub stores hours user volunteered at event
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class event_hours_spent_stub(models.Model):
+	parent_event     = models.ForeignKey(event, on_delete=models.CASCADE)
+	parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+	hours            = models.FloatField(default=0.0)
+#----------------------------------------------------------------------------------------------------------------------------------------------------

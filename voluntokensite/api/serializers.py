@@ -30,7 +30,7 @@ class ChangeUserSerializer(serializers.ModelSerializer):
 class UserVolunteerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CustomUser
-		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role')
+		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role', 'volunteer_token', 'volunteer_hour')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 

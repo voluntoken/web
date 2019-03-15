@@ -23,17 +23,27 @@ from rest_framework import status
 from rest_framework.views import APIView
 from api import serializers
 
+from datetime import datetime, timedelta
+
 
 from django.http import Http404
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from NGO.models   import event, org, event_registration_stub
+from NGO.models   import event, org, event_registration_stub, checks_stub, event_hours_spent_stub
 from BUSINESS.models import business, coupon, transaction_stub
 from users.models import CustomUser
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+
+
+#time stuff
+import pytz
+utc=pytz.utc
+
+#exchange rate
+EXCHANGE_HOUR_TO_TOKEN = 1.0
 
 #USER VIEWS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -71,6 +81,117 @@ class get_user(generics.RetrieveAPIView):
 			return CustomUser.objects.get(id=self.request.user.id)
 		except:
 			raise Http404
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+
+#Home Page API Routes
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+class make_checkin(APIView):
+	def post(self, request):
+		event_id        = request.data['event_id']
+		pin_try         = int(request.data['pin_try'])
+
+		#CHECK event exists and is active
+		try:
+			event_instance = event.objects.get(id=event_id, is_active=True)
+		except:
+			return Response(data ={'error_message':'event not found', 'success':False})
+
+
+		#CHECK correct pin
+		correct_pin      = event_instance.pin_checkin
+		if (correct_pin != pin_try):
+			return Response(data ={'error_message':'incorrect pin', 'success':False})
+
+		time_now         = datetime.utcnow()
+		time_now         = time_now.replace(tzinfo=utc)
+		tolerance        = 60.0*60.0 #in seconds
+		event_start_time = event_instance.start_time.replace(tzinfo=utc)
+		event_end_time   = event_instance.end_time.replace(tzinfo=utc) 
+
+		print(str(event_instance.start_time))
+		#TIME ERROR CHECKS
+		if ((event_start_time - time_now).total_seconds() >= tolerance):
+			return Response(data = {'error_message':'event has not started', 'success':False})
+		elif ((time_now  - event_end_time).total_seconds() >= tolerance):
+			return Response(data = {'error_message':'event has ended', 'success':False})
+
+		#ALREADY CHECKED IN ERROR
+		try:
+			last_stub   = checks_stub.objects.filter(parent_event=event_instance, parent_volunteer=self.request.user).last()
+			if(last_stub.is_check_in == True):
+				return Response(data = {'error_message':'you are already checked in!', 'success':False})
+		except:
+			pass
+		#CREATE CHECKS_STUB FOR CHECKIN
+		stub = checks_stub.objects.create(is_check_in=True, parent_event=event_instance, parent_volunteer=self.request.user, time= time_now)
+		stub.save()
+		return Response(data ={'error_message':'none', 'success':True})
+
+class make_checkout(APIView):
+	def post(self, request):
+		event_id        = request.data['event_id']
+		pin_try         = int(request.data['pin_try'])
+
+		#CHECK event exists and is active
+		try:
+			event_instance = event.objects.get(id=event_id, is_active=True)
+		except:
+			return Response(data ={'error_message':'event not found', 'success':False})
+
+
+		#CHECK correct pin
+		correct_pin      = event_instance.pin_checkout
+		if (correct_pin != pin_try):
+			return Response(data ={'error_message':'incorrect pin', 'success':False})
+
+		time_now         = datetime.utcnow()
+		time_now         = time_now.replace(tzinfo=utc)
+		tolerance        = 60.0*60.0 #in seconds
+		event_start_time = event_instance.start_time.replace(tzinfo=utc)
+		event_end_time   = event_instance.end_time.replace(tzinfo=utc) 
+
+		print(str(event_instance.start_time))
+		#TIME ERROR CHECKS
+		if ((event_start_time - time_now).total_seconds() >= tolerance):
+			return Response(data = {'error_message':'Event has not started!', 'success':False})
+		elif ((time_now  - event_end_time).total_seconds() >= tolerance):
+			return Response(data = {'error_message':'Event has ended!', 'success':False})
+
+		
+		try:
+			last_stub   = checks_stub.objects.filter(parent_event=event_instance, parent_volunteer=self.request.user).last()
+			#ALREADY CHECKED OUT ERROR
+			if(last_stub.is_check_in == False):
+				return Response(data = {'error_message':'You are already checked out!', 'success':False})
+		except:
+			#NOT CHECKED OUT ERROR
+			return Response(data = {'error_message':'You have not checked in!', 'success':False})
+
+
+		#CREATE CHECKS_STUB FOR CHECKOUT
+		new_stub = checks_stub.objects.create(is_check_in=False, parent_event=event_instance, parent_volunteer=self.request.user, time= time_now)
+		new_stub.save()
+
+		#CREATE event_hours_spent_stub for good bookkeeping
+		check_in_time  = last_stub.time.replace(tzinfo=utc)
+		check_out_time = time_now
+
+		hours_spent    = ((check_out_time - check_in_time).total_seconds())/(60.0*60.0)
+		new_hours_stub = event_hours_spent_stub.objects.create(parent_event=event_instance, parent_volunteer=self.request.user, hours=hours_spent)		
+		new_hours_stub.save()
+
+		#UPDATE CustomUser 
+		tokens_earned  = hours_spent*EXCHANGE_HOUR_TO_TOKEN
+		user_instance  = self.request.user
+		user_instance.volunteer_token += tokens_earned
+		user_instance.volunteer_hour  += hours_spent
+		user_instance.save()
+
+		return Response(data ={'error_message':'none', 'success':True})
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #NGO API Routes
@@ -139,7 +260,7 @@ class get_all_my_event(generics.ListAPIView):
 	def get_queryset(self):
 		registration_stubs  = event_registration_stub.objects.filter(parent_volunteer=self.request.user)
 		event_ids           = [x.parent_event.id for x in registration_stubs]
-		return event.objects.filter(id__in=event_ids)
+		return event.objects.filter(id__in=event_ids, is_active=True)
 		
 
 class is_user_registered_for_event(APIView):
@@ -239,50 +360,65 @@ class get_coupon(generics.RetrieveAPIView):
 	serializer_class = serializers.CouponSerializer
 
 
-class is_verified_donation(APIView):
-	def get(self, request, **kwargs):
-		coupon_id       = kwargs['coupon_id']
-		pin_try         = kwargs['pin_try']
-		try:
-			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
-		except:
-			return Response(data ={'error_message':'not donation', 'success':False})
-		business_agent  = coupon_instance.parent_business
-		correct_pin     = business_agent.pin
-		if (correct_pin == pin_try):
-			return Response(data ={'error_message':'none', 'success':True})
-		else:
-			return Response(data ={'error_message':'wrong pin', 'success':False})
+# class is_verified_donation(APIView):
+# 	def get(self, request, **kwargs):
+# 		coupon_id       = kwargs['coupon_id']
+# 		pin_try         = kwargs['pin_try']
+# 		try:
+# 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
+# 		except:
+# 			return Response(data ={'error_message':'not donation', 'success':False})
+# 		business_agent  = coupon_instance.parent_business
+# 		correct_pin     = business_agent.pin
+# 		if (correct_pin == pin_try):
+# 			return Response(data ={'error_message':'none', 'success':True})
+# 		else:
+# 			return Response(data ={'error_message':'wrong pin', 'success':False})
 
 
 class make_transcation_donation(APIView):
 	def post(self, request):
 		coupon_id       = request.data['coupon_id']
+		pin_try         = int(request.data['pin_try'])
+
+
+		#Check if Coupon is active, donation, and exists
 		try:
 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
 		except:
 			return Response(data ={'error_message':'not donation', 'success':False})
 
 		business_agent  = coupon_instance.parent_business
+		correct_pin     = business_agent.pin
+
+		#Check if PIN IS CORRECT
+		if (correct_pin != pin_try):
+			return Response(data ={'error_message':'incorrect pin', 'success':False})
+
 		coupon_cost     = coupon_instance.token_cost
 		volunteer       = request.user
 		volunteer_funds = volunteer.volunteer_token
 
-		if (volunteer_funds >= coupon_cost):
-			volunteer_funds                = volunteer_funds - coupon_cost
-			volunteer.volunteer_token      = volunteer_funds
-			business_agent.donation_tokens += coupon_cost
-			stub = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
-			stub.save()
-			business_agent.save()
-			volunteer.save()
-			return Response(data ={'error_message':'none', 'success':True})
-		else:
-			return Response(data = {'error message':'insufficient funds', 'success':False})
+		#CHECK IF ENOUGH FUNDS
+		if (volunteer_funds <= coupon_cost):
+			return Response(data = {'error_message':'insufficient funds', 'success':False})
+
+		volunteer_funds                = volunteer_funds - coupon_cost
+		volunteer.volunteer_token      = volunteer_funds
+		business_agent.donation_tokens += coupon_cost
+		stub = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+		stub.save()
+		business_agent.save()
+		volunteer.save()
+		return Response(data ={'error_message':'none', 'success':True})
+			
 
 class make_transcation_discount(APIView):
 	def post(self, request):
 		coupon_id       = request.data['coupon_id']
+		
+
+		#CHECK if coupon exists
 		try:
 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False, is_active=True)
 		except:
@@ -293,16 +429,20 @@ class make_transcation_discount(APIView):
 		volunteer       = request.user
 		volunteer_funds = volunteer.volunteer_token
 
-		if (volunteer_funds >= coupon_cost):
-			volunteer_funds                = volunteer_funds - coupon_cost
-			volunteer.volunteer_token      = volunteer_funds
-			business_agent.discount_tokens += coupon_cost
-			stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
-			stub.save()
-			business_agent.save()
-			volunteer.save()
-			return Response(data ={'error_message':'none', 'success':True})
-		else:
-			return Response(data = {'error message':'insufficient funds', 'success':False})
+		#CHECK if sufficient funds
+		if (volunteer_funds <= coupon_cost):
+			return Response(data = {'error_message':'insufficient funds', 'success':False})
+		
+
+		volunteer_funds                = volunteer_funds - coupon_cost
+		volunteer.volunteer_token      = volunteer_funds
+		business_agent.discount_tokens += coupon_cost
+		stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+		stub.save()
+		business_agent.save()
+		volunteer.save()
+		return Response(data ={'error_message':'none', 'success':True})
+		
+			
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------

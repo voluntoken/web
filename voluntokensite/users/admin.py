@@ -12,9 +12,9 @@ class CustomUserAdmin(UserAdmin):
     # add_form = CustomUserCreationForm_Admin
     # form = CustomUserChangeForm_Admin
     model = CustomUser
-    list_display = ['username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'parent_ngo', 'parent_business', 'is_active']
+    list_display = ['username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'volunteer_hour', 'parent_ngo', 'parent_business', 'is_active']
     fieldsets = (
-            (None, {'fields': ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'parent_ngo', 'parent_business', 'is_active')}),
+            (None, {'fields': ('username', 'first_name', 'last_name', 'email','user_type', 'volunteer_role','volunteer_token', 'volunteer_hour','parent_ngo', 'parent_business', 'is_active')}),
     )
 
 

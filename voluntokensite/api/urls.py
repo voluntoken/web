@@ -25,6 +25,10 @@ urlpatterns = [
 
 	#GET
 	path('get_user/', views.get_user.as_view(), name='get_user'),
+
+	#POST
+	path('make_checkin/', views.make_checkin.as_view(), name='make_checkin'),
+	path('make_checkout/', views.make_checkout.as_view(), name='make_checkout'),
 	#----------------------------------------------------------------------------------------------------------------------------------------------------
 
 	#NGO API ROUTES
@@ -60,7 +64,6 @@ urlpatterns = [
 	path('get_all_business_donation_coupon/<int:parent_business_id>', views.get_all_business_donation_coupon.as_view(), name='get_all_business_donation_coupon'),
 	path('get_business/<int:business_id>', views.get_business.as_view(), name='get_business'),
 	path('get_coupon/<int:coupon_id>', views.get_coupon.as_view(), name='get_coupon'),
-	path('is_verified_donation/<int:coupon_id>/<int:pin_try>', views.is_verified_donation.as_view(), name='is_verified_donation'),
 
 
 	#POST Request, self.request.user
