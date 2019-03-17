@@ -75,43 +75,6 @@ class ChangeUserAPIView(generics.RetrieveUpdateAPIView):
 		except CustomUser.DoesNotExist:
 			raise Http404
 
-# class ChangeUserPasswordAPIView(generics.RetrieveUpdateAPIView):
-# 	serializer_class = serializers.ChangeUserPasswordSerializer
-
-# 	def get_object(self):
-# 		user_id      = self.request.user.id
-# 		try:
-# 			user_instance = CustomUser.objects.get(id=user_id, is_active=True)
-# 			if(self.request.data['old_password'] == user_instance.password):
-# 				return user_instance
-# 			else:
-# 				return None
-# 		except CustomUser.DoesNotExist:
-# 			raise Http404
-
-
-# class ChangePasswordAPIView(generics.UpdateAPIView):
-# 	serializer_class   = serializers.ChangePasswordSerializer
-# 	model              = User
-
-# 	def get_object(self, queryset=None):
-# 		obj = self.request.user
-# 		return obj
-
-# 	def update(self, request, *args, **kwargs):
-# 		self.object = self.get_object()
-# 		serializer  = self.get_serializer(data=request.data)
-
-# 		if serializer.is_valid():
-# 			# Check old password
-# 			if not self.object.check_password(serializer.data.get("old_password")):
-# 				return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
-# 			# set_password also hashes the password that the user will get
-# 			self.object.set_password(serializer.data.get("new_password"))
-# 			self.object.save()
-# 			return Response("Success.", status=status.HTTP_200_OK)
-		
-# 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ChangePasswordAPIView(APIView):
 	"""
     An endpoint for changing password.
@@ -435,23 +398,6 @@ class get_coupon(generics.RetrieveAPIView):
 		except coupon.DoesNotExist:
 			raise Http404
 	serializer_class = serializers.CouponSerializer
-
-
-# class is_verified_donation(APIView):
-# 	def get(self, request, **kwargs):
-# 		coupon_id       = kwargs['coupon_id']
-# 		pin_try         = kwargs['pin_try']
-# 		try:
-# 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = True, is_active=True)
-# 		except:
-# 			return Response(data ={'error_message':'not donation', 'success':False})
-# 		business_agent  = coupon_instance.parent_business
-# 		correct_pin     = business_agent.pin
-# 		if (correct_pin == pin_try):
-# 			return Response(data ={'error_message':'none', 'success':True})
-# 		else:
-# 			return Response(data ={'error_message':'wrong pin', 'success':False})
-
 
 class make_transcation_donation(APIView):
 	def post(self, request):

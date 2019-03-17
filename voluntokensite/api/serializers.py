@@ -65,22 +65,7 @@ class NGOSerializer(serializers.ModelSerializer):
 		model = org
 		fields = ('id', 'name', 'description', 'email', 'address')
 		#read_only_fields = ('id', 'name', 'description', 'email', 'address')
-
-
-# class EventRegistrationStubSerializer(serializers.Serializer):
-# 	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.username')
-# 	parent_event     = serializers.IntegerField()
-
-# 	def create(self, validated_data):
-# 		return event_registration_stub.objects.create(**validated_data)
-
-# 	def update(self, instance, validated_data):
-# 		instance.parent_volunteer = validated_data.get('parent_volunteer', instance.parent_volunteer)
-# 		instance.parent_event     = validated_data.get('parent_event', instance.parent_event)
-# 		isntance.save()
-# 		return instance
-
-
+		
 class EventRegistrationStubSerializer(serializers.ModelSerializer):
 	parent_volunteer = serializers.ReadOnlyField(source='parent_volunteer.id')
 	class Meta:
