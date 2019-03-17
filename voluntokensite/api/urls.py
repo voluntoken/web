@@ -23,6 +23,9 @@ urlpatterns = [
 		views.LogoutUserAPIView.as_view(),
 		name='auth_user_logout'),
 
+	path('user_settings/', views.ChangeUserAPIView.as_view(), name='user_settings'),
+	path('change_password/', views.ChangePasswordAPIView.as_view(), name='change_password'),
+
 	#GET
 	path('get_user/', views.get_user.as_view(), name='get_user'),
 

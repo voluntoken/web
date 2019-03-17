@@ -31,6 +31,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from django.contrib.auth.models import User
 from NGO.models   import event, org, event_registration_stub, checks_stub, event_hours_spent_stub
 from BUSINESS.models import business, coupon, transaction_stub
 from users.models import CustomUser
@@ -65,6 +66,73 @@ class CreateUserAPIView(generics.CreateAPIView):
 			headers=headers
 		)
 
+class ChangeUserAPIView(generics.RetrieveUpdateAPIView):
+	serializer_class = serializers.ChangeUserSerializer
+	def get_object(self):
+		user_id     = self.request.user.id
+		try:
+			return CustomUser.objects.get(id=user_id, is_active=True)
+		except CustomUser.DoesNotExist:
+			raise Http404
+
+# class ChangeUserPasswordAPIView(generics.RetrieveUpdateAPIView):
+# 	serializer_class = serializers.ChangeUserPasswordSerializer
+
+# 	def get_object(self):
+# 		user_id      = self.request.user.id
+# 		try:
+# 			user_instance = CustomUser.objects.get(id=user_id, is_active=True)
+# 			if(self.request.data['old_password'] == user_instance.password):
+# 				return user_instance
+# 			else:
+# 				return None
+# 		except CustomUser.DoesNotExist:
+# 			raise Http404
+
+
+# class ChangePasswordAPIView(generics.UpdateAPIView):
+# 	serializer_class   = serializers.ChangePasswordSerializer
+# 	model              = User
+
+# 	def get_object(self, queryset=None):
+# 		obj = self.request.user
+# 		return obj
+
+# 	def update(self, request, *args, **kwargs):
+# 		self.object = self.get_object()
+# 		serializer  = self.get_serializer(data=request.data)
+
+# 		if serializer.is_valid():
+# 			# Check old password
+# 			if not self.object.check_password(serializer.data.get("old_password")):
+# 				return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+# 			# set_password also hashes the password that the user will get
+# 			self.object.set_password(serializer.data.get("new_password"))
+# 			self.object.save()
+# 			return Response("Success.", status=status.HTTP_200_OK)
+		
+# 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class ChangePasswordAPIView(APIView):
+	"""
+    An endpoint for changing password.
+    """
+	def get_object(self, queryset=None):
+		return self.request.user
+
+	def put(self, request, *args, **kwargs):
+		self.object = self.get_object()
+		serializer = serializers.ChangePasswordSerializer(data=request.data)
+
+		if serializer.is_valid():
+			# Check old password
+			old_password = serializer.data.get("old_password")
+			if not self.object.check_password(old_password):
+				return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+			# set_password also hashes the password that the user will get
+			self.object.set_password(serializer.data.get("new_password"))
+			self.object.save()
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LogoutUserAPIView(APIView):
 	queryset = CustomUser.objects.all()
@@ -187,6 +255,10 @@ class make_checkout(APIView):
 		ngo_parent                 = event_instance.parent_ngo
 		ngo_parent.volunteer_hour += hours_spent 
 		ngo_parent.save()
+
+		#Update Event Volunteer Hours
+		event_instance.volunteer_hour += hours_spent
+		event_instance.save()
 
 		#UPDATE CustomUser 
 		tokens_earned  = hours_spent*EXCHANGE_HOUR_TO_TOKEN

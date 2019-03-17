@@ -4,7 +4,7 @@ from users.models import CustomUser
 from rest_framework import serializers
 from NGO.models import event, org, event_registration_stub, checks_stub
 from BUSINESS.models import coupon, business, transaction_stub
-
+from django.contrib.auth.password_validation import validate_password
 #User AuthSerializer
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -26,11 +26,29 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class ChangeUserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = CustomUser
+		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role', 'volunteer_token', 'volunteer_hour')
+		read_only_fields = ('id', 'username', 'user_type', 'volunteer_hour', 'volunteer_token')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+	"""
+	Serializer for password change endpoint.
+	"""
+	old_password = serializers.CharField(required=True)
+	new_password = serializers.CharField(required=True)
+
+	def validate_new_password(self, value):
+		validate_password(value)
+		return value
 
 class UserVolunteerSerializer(serializers.ModelSerializer):
+
 	class Meta:
 		model = CustomUser
 		fields = ('id', 'email', 'username', 'first_name', 'last_name', 'user_type', 'is_public', 'volunteer_role', 'volunteer_token', 'volunteer_hour')
+		#read_only_fields = ('id', 'username', 'user_type', 'volunteer_hour', 'volunteer_token')
+
+
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -39,12 +57,14 @@ class UserVolunteerSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = event
-		fields = ('id', 'qr_code', 'parent_ngo', 'name', 'description', 'is_active', 'start_time', 'end_time')
+		fields = ('id', 'qr_code', 'parent_ngo', 'name', 'description', 'is_active', 'start_time', 'end_time', 'volunteer_hour')
+		#read_only_fields = ('id', 'qr_code', 'parent_ngo', 'name', 'description', 'is_active', 'start_time', 'end_time')
 
 class NGOSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = org
 		fields = ('id', 'name', 'description', 'email', 'address')
+		#read_only_fields = ('id', 'name', 'description', 'email', 'address')
 
 
 # class EventRegistrationStubSerializer(serializers.Serializer):

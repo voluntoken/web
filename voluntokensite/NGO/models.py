@@ -29,14 +29,15 @@ class org(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class event(models.Model):
 	#Profile Info
-	name         = models.CharField(max_length = 200)
-	description  = models.CharField(max_length = 2500)
-	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	parent_ngo   = models.ForeignKey(org, on_delete=models.CASCADE)
-	qr_code      = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	pin_checkin  = models.IntegerField(default=randint(1000,9999))
-	pin_checkout = models.IntegerField(default=randint(1000,9999))
-	is_active    = models.BooleanField(default=True)
+	name            = models.CharField(max_length = 200)
+	description     = models.CharField(max_length = 2500)
+	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+	parent_ngo      = models.ForeignKey(org, on_delete=models.CASCADE)
+	qr_code         = models.ImageField(upload_to=get_image_path, blank=True, null=True)
+	pin_checkin     = models.IntegerField(default=randint(1000,9999))
+	pin_checkout    = models.IntegerField(default=randint(1000,9999))
+	is_active       = models.BooleanField(default=True)
+	volunteer_hour  = models.FloatField(default=0.0)
 
 	#Timing
 	start_time   = models.DateTimeField(default=datetime.utcnow)
