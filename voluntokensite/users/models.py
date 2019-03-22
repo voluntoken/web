@@ -42,4 +42,5 @@ class total_hours_stub(models.Model):
     parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     parent_ngo       = models.ForeignKey('NGO.org', on_delete=models.CASCADE)
     total_hours      = models.FloatField(default=0.0)
+    total_donation_tokens = models.FloatField(default=0.0)
 #----------------------------------------------------------------------------------------------------------------------------------------------------

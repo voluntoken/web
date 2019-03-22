@@ -456,12 +456,24 @@ class make_transaction_donation(APIView):
 		total_hours_stub_set     = total_hours_stub.objects.filter(parent_volunteer=volunteer)
 		for total_hours_stub_instance in total_hours_stub_set:
 			ngo_instance         = total_hours_stub_instance.parent_ngo
+
+			#Update total_support_stub_instance for specific ngo
 			try:
 				total_support_stub_instance = total_support_stub.objects.get(parent_business=business_agent, parent_ngo=ngo_instance)
 			except total_support_stub.DoesNotExist:
 				total_support_stub_instance = total_support_stub.objects.create(parent_business=business_agent, parent_ngo=ngo_instance)
 			total_support_stub_instance.total_hours           += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 			total_support_stub_instance.total_donation_tokens += coupon_cost
+
+			#Update total_hours_stub_instance for specific ngo and user
+			try:
+				total_hours_stub_instance   = total_hours_stub.objects.get(parent_ngo=ngo_instance, parent_volunteer=volunteer)
+			except total_hours_stub.DoesNotExist:
+				total_hours_stub_instance   = total_hours_stub.objects.create(parent_ngo=ngo_instance, parent_volunteer=volunteer)
+
+			total_hours_stub_instance.total_donation_tokens   += coupon_cost			
+			
+			total_hours_stub_instance.save()
 			total_support_stub_instance.save()
 
 		transaction_stub_instance.save()
