@@ -33,8 +33,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from django.contrib.auth.models import User
 from NGO.models   import event, org, event_registration_stub, checks_stub, event_hours_spent_stub
-from BUSINESS.models import business, coupon, transaction_stub
-from users.models import CustomUser
+from BUSINESS.models import business, coupon, transaction_stub, total_support_stub
+from users.models import CustomUser, total_hours_stub
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 
@@ -44,7 +44,7 @@ import pytz
 utc=pytz.utc
 
 #exchange rate
-EXCHANGE_HOUR_TO_TOKEN = 1.0
+EXCHANGE_TOKEN_HOUR = 1.0 #units = token/hour
 
 #USER VIEWS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,8 +203,7 @@ class make_checkout(APIView):
 
 
 		#CREATE CHECKS_STUB FOR CHECKOUT
-		new_stub = checks_stub.objects.create(is_check_in=False, parent_event=event_instance, parent_volunteer=self.request.user, time= time_now)
-		new_stub.save()
+		new_checks_stub = checks_stub.objects.create(is_check_in=False, parent_event=event_instance, parent_volunteer=self.request.user, time= time_now)
 
 		#CREATE event_hours_spent_stub for good bookkeeping
 		check_in_time  = last_stub.time.replace(tzinfo=utc)
@@ -212,23 +211,39 @@ class make_checkout(APIView):
 
 		hours_spent    = ((check_out_time - check_in_time).total_seconds())/(60.0*60.0)
 		new_hours_stub = event_hours_spent_stub.objects.create(parent_event=event_instance, parent_volunteer=self.request.user, hours=hours_spent)		
-		new_hours_stub.save()
+		
 
 		#Update NGO Volunteer Hours
 		ngo_parent                 = event_instance.parent_ngo
 		ngo_parent.volunteer_hour += hours_spent 
-		ngo_parent.save()
+		
 
 		#Update Event Volunteer Hours
 		event_instance.volunteer_hour += hours_spent
-		event_instance.save()
+		
 
 		#UPDATE CustomUser 
-		tokens_earned  = hours_spent*EXCHANGE_HOUR_TO_TOKEN
+		tokens_earned  = hours_spent*EXCHANGE_TOKEN_HOUR
 		user_instance  = self.request.user
 		user_instance.volunteer_token += tokens_earned
 		user_instance.volunteer_hour  += hours_spent
+		
+
+		#Update total_hours_stub for CustomUser
+		try:
+			total_hours_stub_instance  = total_hours_stub.objects.get(parent_ngo=ngo_parent, parent_volunteer=user_instance)
+		except total_hours_stub.DoesNotExist:
+			total_hours_stub_instance  = total_hours_stub.objects.create(parent_ngo=ngo_parent, parent_volunteer=user_instance)
+
+		total_hours_stub_instance.total_hours += hours_spent
+
+
+		new_checks_stub.save()
+		new_hours_stub.save()
+		ngo_parent.save()
+		event_instance.save()
 		user_instance.save()
+		total_hours_stub_instance.save()
 
 		return Response(data ={'error_message':'none', 'success':True})
 
@@ -399,7 +414,7 @@ class get_coupon(generics.RetrieveAPIView):
 			raise Http404
 	serializer_class = serializers.CouponSerializer
 
-class make_transcation_donation(APIView):
+class make_transaction_donation(APIView):
 	def post(self, request):
 		coupon_id       = request.data['coupon_id']
 		pin_try         = int(request.data['pin_try'])
@@ -426,17 +441,36 @@ class make_transcation_donation(APIView):
 		if (volunteer_funds <= coupon_cost):
 			return Response(data = {'error_message':'insufficient funds', 'success':False})
 
+		#Update Volunteer Funds
 		volunteer_funds                = volunteer_funds - coupon_cost
 		volunteer.volunteer_token      = volunteer_funds
+		
+		#Update Business Donation Tokens and Hours
 		business_agent.donation_tokens += coupon_cost
-		stub = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
-		stub.save()
+		business_agent.total_hours     += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
+
+		#Update Transaction Stub Instance
+		transaction_stub_instance      = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+
+		#Update relevant total_support_stub's
+		total_hours_stub_set     = total_hours_stub.objects.filter(parent_volunteer=volunteer)
+		for total_hours_stub_instance in total_hours_stub_set:
+			ngo_instance         = total_hours_stub_instance.parent_ngo
+			try:
+				total_support_stub_instance = total_support_stub.objects.get(parent_business=business_agent, parent_ngo=ngo_instance)
+			except total_support_stub.DoesNotExist:
+				total_support_stub_instance = total_support_stub.objects.create(parent_business=business_agent, parent_ngo=ngo_instance)
+			total_support_stub_instance.total_hours           += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
+			total_support_stub_instance.total_donation_tokens += coupon_cost
+			total_support_stub_instance.save()
+
+		transaction_stub_instance.save()
 		business_agent.save()
 		volunteer.save()
 		return Response(data ={'error_message':'none', 'success':True})
 			
 
-class make_transcation_discount(APIView):
+class make_transaction_discount(APIView):
 	def post(self, request):
 		coupon_id       = request.data['coupon_id']
 		
@@ -445,7 +479,7 @@ class make_transcation_discount(APIView):
 		try:
 			coupon_instance = coupon.objects.get(id=coupon_id, is_donation = False, is_active=True)
 		except:
-			return Response(data ={'error_message':'not donation', 'success':False})
+			return Response(data ={'error_message':'not discount', 'success':False})
 
 		business_agent  = coupon_instance.parent_business
 		coupon_cost     = coupon_instance.token_cost
@@ -456,12 +490,30 @@ class make_transcation_discount(APIView):
 		if (volunteer_funds <= coupon_cost):
 			return Response(data = {'error_message':'insufficient funds', 'success':False})
 		
-
+		#Update Volunteer Funds
 		volunteer_funds                = volunteer_funds - coupon_cost
 		volunteer.volunteer_token      = volunteer_funds
+
+		#Update Business Donation Tokens and Hours
 		business_agent.discount_tokens += coupon_cost
-		stub = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
-		stub.save()
+		business_agent.total_hours     += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
+
+		#Update Transaction Stub Instance
+		transaction_stub_instance      = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+		
+		#Update relevant total_support_stub's
+		total_hours_stub_set     = total_hours_stub.objects.filter(parent_volunteer=volunteer)
+		for total_hours_stub_instance in total_hours_stub_set:
+			ngo_instance         = total_hours_stub_instance.parent_ngo
+			try:
+				total_support_stub_instance = total_support_stub.objects.get(parent_business=business_agent, parent_ngo=ngo_instance)
+			except total_support_stub.DoesNotExist:
+				total_support_stub_instance = total_support_stub.objects.create(parent_business=business_agent, parent_ngo=ngo_instance)
+			total_support_stub_instance.total_hours           += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
+			total_support_stub_instance.total_discount_tokens += coupon_cost
+			total_support_stub_instance.save()
+		
+		transaction_stub_instance.save()
 		business_agent.save()
 		volunteer.save()
 		return Response(data ={'error_message':'none', 'success':True})

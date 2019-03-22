@@ -4,8 +4,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm_Admin, CustomUserChangeForm_Admin
-from .models import CustomUser
+from .models import CustomUser, total_hours_stub
 
+admin.site.register(total_hours_stub)
 #Custom User Admin Class to Display and Have Edit access to new Custom Fields
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class CustomUserAdmin(UserAdmin):

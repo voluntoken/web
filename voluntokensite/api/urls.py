@@ -70,8 +70,8 @@ urlpatterns = [
 
 
 	#POST Request, self.request.user
-	path('make_transcation_discount/', views.make_transcation_discount.as_view(), name='make_transcation_discount'),
-	path('make_transcation_donation/', views.make_transcation_donation.as_view(), name='make_transcation_donation'),
+	path('make_transaction_discount/', views.make_transaction_discount.as_view(), name='make_transaction_discount'),
+	path('make_transaction_donation/', views.make_transaction_donation.as_view(), name='make_transaction_donation'),
 	
 
 	#----------------------------------------------------------------------------------------------------------------------------------------------------

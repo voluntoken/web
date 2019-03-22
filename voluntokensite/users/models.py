@@ -35,3 +35,11 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 #----------------------------------------------------------------------------------------------------------------------------------------------------
+
+#Keeps track of how many hours a user has volunteered at an NGO
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class total_hours_stub(models.Model):
+    parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    parent_ngo       = models.ForeignKey('NGO.org', on_delete=models.CASCADE)
+    total_hours      = models.FloatField(default=0.0)
+#----------------------------------------------------------------------------------------------------------------------------------------------------

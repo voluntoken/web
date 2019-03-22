@@ -1,5 +1,6 @@
 from django.db import models
 from users.models  import CustomUser
+from NGO.models  import org
 from random import randint
 import os
 
@@ -22,6 +23,7 @@ class business(models.Model):
 	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	#Donations, Discounts Metrics
+	total_hours     = models.FloatField(default=0.0) 
 	donation_tokens = models.FloatField(default=0.0) 
 	discount_tokens = models.FloatField(default=0.0)
 	qr_code         = models.ImageField(upload_to= get_image_path, blank=True, null=True)
@@ -65,3 +67,13 @@ class transaction_stub(models.Model):
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
 	parent_volunteer     = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 #----------------------------------------------------------------------------------------------------------------------------------------------------	
+
+#Keeps track of how many hours of volunteering at an NGO a business has supported and how much they have pledged to donate
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class total_support_stub(models.Model):
+    parent_business       = models.ForeignKey(business, on_delete=models.CASCADE)
+    parent_ngo            = models.ForeignKey(org, on_delete=models.CASCADE)
+    total_hours           = models.FloatField(default=0.0)
+    total_discount_tokens = models.FloatField(default=0.0)
+    total_donation_tokens = models.FloatField(default=0.0)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
