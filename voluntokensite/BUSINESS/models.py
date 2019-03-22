@@ -4,6 +4,9 @@ from NGO.models  import org
 from random import randint
 import os
 
+#exchange rate
+EXCHANGE_TOKEN_HOUR = 1.0 #units = token/hour
+
 #image stuff
 def get_image_path(instance, filename):
 	return os.path.join('photos', str(instance.id), filename)
@@ -17,6 +20,7 @@ class business(models.Model):
 	#Profile Information
 	name           = models.CharField(max_length = 50)
 	description    = models.CharField(max_length = 2500)
+	website        = models.URLField(null=True)
 	email          = models.EmailField(max_length = 200)
 	address        = models.CharField(max_length = 500)
 	is_active      = models.BooleanField(default=True)
@@ -75,6 +79,20 @@ class transaction_stub(models.Model):
 class total_support_stub(models.Model):
     parent_business       = models.ForeignKey(business, on_delete=models.CASCADE)
     parent_ngo            = models.ForeignKey(org, on_delete=models.CASCADE)
+    total_hours           = models.FloatField(default=0.0)
+    total_discount_tokens = models.FloatField(default=0.0)
+    total_donation_tokens = models.FloatField(default=0.0)
+
+    #number of transactions through which businesses have supported this NGO
+    total_transactions    = models.IntegerField(default=0.0)
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+
+#Keeps track of how many hours of volunteering, discount tokens, and donation tokens a user has spent at a business to support a specific NGO
+#----------------------------------------------------------------------------------------------------------------------------------------------------
+class user_support_stub(models.Model):
+    parent_business       = models.ForeignKey(business, on_delete=models.CASCADE)
+    parent_ngo            = models.ForeignKey(org, on_delete=models.CASCADE)
+    parent_volunteer      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     total_hours           = models.FloatField(default=0.0)
     total_discount_tokens = models.FloatField(default=0.0)
     total_donation_tokens = models.FloatField(default=0.0)

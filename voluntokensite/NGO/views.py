@@ -7,7 +7,7 @@ from .forms import eventCreationForm, eventChangeForm
 from django.views import View
 from django.shortcuts import render, redirect
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
 
 #COUPONS
@@ -24,10 +24,12 @@ class Show_Events(View):
 	template_name = 'event_view.html'
 	
 	def get(self, request, *args, **kwargs):
-			user_ngo_id = request.user.parent_ngo		
-			event_list = event.objects.filter(parent_ngo=user_ngo_id)
-			print(event_list)
-			return render(request, self.template_name, {'title':"Events","events":event_list})
+		if(request.user.user_type != 'NG'):
+			return HttpResponseNotFound('<h1>Page not found</h1>')
+		user_ngo_id = request.user.parent_ngo		
+		event_list = event.objects.filter(parent_ngo=user_ngo_id)
+		print(event_list)
+		return render(request, self.template_name, {'title':"Events","events":event_list})
 			
 
 
@@ -37,6 +39,8 @@ class Create_Event(View):
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
+		if(request.user.user_type != 'NG'):
+			return HttpResponseNotFound('<h1>Page not found</h1>')
 		# print(request.user.username)
 		# print(request.user.parent_ngo)
 		user_ngo_id = request.user.parent_ngo
@@ -60,7 +64,8 @@ class Change_Event(View):
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
-		
+		if(request.user.user_type != 'NG'):
+			return HttpResponseNotFound('<h1>Page not found</h1>')
 		event_obj = event.objects.get(id=self.kwargs['event_id'])
 		form = self.form_class(instance=event_obj)	
 		return render(request, self.template_name, {'form': form, 'title':"Event Modification",'submit_text':"save"})

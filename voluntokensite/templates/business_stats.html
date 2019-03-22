@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %} {{title}}{% endblock %}
+{% block content %}
+	<h2>{{title}}</h2>
+	<div class="container">
+	  <h3>NGOs Supported</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>NGO</th>
+	        <th>Volunteering Supported (hours)</th>
+	        <th>Donations Pledged ($)</th>
+	        <th>Discounts Given (V) </th>
+	        <th>Customers Obtained (#)</th>
+	        <th>Total Transactions (#)</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in ngos_supported %}
+	      <tr>
+	        <td><a href={{x.website}}>{{x.name}}</a></td>
+	        <td>{{x.hours}}</td>
+	        <td>{{x.donations}} </td>
+	        <td>{{x.discounts}} </td>
+	        <td>{{x.number_customers}} </td>
+	        <td>{{x.number_transactions}} </td>
+	        <td></td>
+	      </tr>
+	    {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+
+		<!-- {% for x in coupons%}
+					
+				<div style="outline: 5px solid black;">	
+					{{x}}
+					<br>{{x.description}}
+					<br>
+					 
+					
+					{% if x.is_donation == False %}		
+						<a href="{% url 'coupon_dis_edit' x.id %}">
+							 EDIT
+						</a> 		
+						
+						<a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
+							 DELETE
+						</a> 	
+									
+					{%else%}
+						<a href="{% url 'coupon_don_edit' x.id %}">
+							 EDIT
+						</a> 		
+						
+						<a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
+							 DELETE
+						</a> 	
+						
+					{% endif %}
+					
+
+					
+					
+				</div>
+				
+				<br>
+				<br>
+				
+		{% endfor %} -->
+
+
+		<a href="{% url 'home' %}">
+			 HOME
+		</a> 	
+
+{% endblock %}

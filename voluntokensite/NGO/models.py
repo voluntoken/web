@@ -15,6 +15,7 @@ class org(models.Model):
 	#Profile Info
 	name        = models.CharField(max_length = 50)
 	description = models.CharField(max_length = 2500)
+	website     = models.URLField(null=True)
 	email       = models.EmailField(max_length = 200)
 	address     = models.CharField(max_length = 500)
 	is_active   = models.BooleanField(default=True)

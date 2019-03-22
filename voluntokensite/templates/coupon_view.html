@@ -1,51 +1,174 @@
 {% extends 'base.html' %}
 {% block title %} {{title}}{% endblock %}
 {% block content %}
-	<h2>{{title}}</h2>
+
+	<h2>Discount Coupons</h2>
+
+	<div class="container">
+	  <h3>Active Coupons</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Description</th>
+	        <th>Token Price (V)</th>
+	        <th>Approximate Item Profit ($)</th>
+	        <th> EDIT </th>
+	        <th> DELETE </th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in coupons%}
+	    	{% if x.is_donation == False and x.is_active == True%}
+	    		<tr>
+	        		<td>{{x.name}}</td>
+	        		<td>{{x.description}}</td>
+	        		<td>{{x.token_cost}}</td>
+	        		<td>{{x.item_cost}}</td>
+	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
+							 EDIT
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
+							 DELETE
+						</a> </td>
+	      		</tr>
+	     	{% endif %}
+	    {% endfor %}
+	    	<tr>
+	        		<td><a href="{% url 'create_coupons_dis' %}"> CREATE NEW</a></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	      	</tr>
+	    </tbody>
+	  </table>
+	</div>
+	<div class="container">
+	  <h3>Inactive Coupons</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Description</th>
+	        <th>Token Price (V)</th>
+	        <th>Approximate Item Profit ($)</th>
+	        <th> EDIT </th>
+	        <th> DELETE </th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in coupons%}
+	    	{% if x.is_donation == False and x.is_active == False%}
+	    		<tr>
+	        		<td>{{x.name}}</td>
+	        		<td>{{x.description}}</td>
+	        		<td>{{x.token_cost}}</td>
+	        		<td>{{x.item_cost}}</td>
+	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
+							 EDIT
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
+							 DELETE
+						</a> </td>
+	      		</tr>
+	     	{% endif %}
+	    {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+
+
+
+
+	<h2>Donation Coupons</h2>
+	<div class="container">
+	  <h3>Active Coupons</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Description</th>
+	        <th>Donation Pledge ($)</th>
+	        <th>Token Price (V)</th>
+	        <th>Approximate Item Profit ($)</th>
+	        <th> EDIT </th>
+	        <th> DELETE </th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in coupons%}
+	    	{% if x.is_donation == True and x.is_active == True%}
+	    		<tr>
+	        		<td>{{x.name}}</td>
+	        		<td>{{x.description}}</td>
+	        		<td>{{x.donation_val}}</td>
+	        		<td>{{x.token_cost}}</td>
+	        		<td>{{x.item_cost}}</td>
+	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
+							 EDIT
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
+							 DELETE
+						</a> </td>
+	      		</tr>
+	     	{% endif %}
+	    {% endfor %}
+	    	<tr>
+	        		<td><a href="{% url 'create_coupons_don' %}"> CREATE NEW</a></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	        		<td></td>
+	      	</tr>
+	    </tbody>
+	  </table>
+	</div>
+
+	<div class="container">
+	  <h3>Inactive Coupons</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Description</th>
+	        <th>Donation Pledge ($)</th>
+	        <th>Token Price (V)</th>
+	        <th>Approximate Item Profit ($)</th>
+	        <th> EDIT </th>
+	        <th> DELETE </th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in coupons%}
+	    	{% if x.is_donation == True and x.is_active == False%}
+	    		<tr>
+	        		<td>{{x.name}}</td>
+	        		<td>{{x.description}}</td>
+	        		<td>{{x.donation_val}}</td>
+	        		<td>{{x.token_cost}}</td>
+	        		<td>{{x.item_cost}}</td>
+	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
+							 EDIT
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
+							 DELETE
+						</a> </td>
+	      		</tr>
+	     	{% endif %}
+	    {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
 	
-		{% for x in coupons%}
-					
-				<div style="outline: 5px solid black;">	
-					{{x}}
-					<br>{{x.description}}
-					<br>
-					 
-					
-					{% if x.is_donation == False %}		
-<!-- 					discount			 -->
-						<a href="{% url 'coupon_dis_edit' x.id %}">
-							 EDIT
-						</a> 		
-						
-						<a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
-							 DELETE
-						</a> 	
-									
-					{%else%}
-<!-- 					donations -->
-						<a href="{% url 'coupon_don_edit' x.id %}">
-							 EDIT
-						</a> 		
-						
-						<a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
-							 DELETE
-						</a> 	
-						
-					{% endif %}
-					
 
-					
-					
-				</div>
-				
-				<br>
-				<br>
-				
-		{% endfor %}
-
-
-		<a href="{% url 'home' %}">
+	<h2 align="center">
+	<a href="{% url 'home' %}">
 			 HOME
-		</a> 	
+	</a>
+	</h2> 	
 
 {% endblock %}

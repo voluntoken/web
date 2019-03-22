@@ -6,7 +6,7 @@ from .forms import CustomUserCreationForm_Volunteer, CustomUserCreationForm_NGO,
 from .forms import CustomUserChangeForm_Volunteer, CustomUserChangeForm_NGO, CustomUserChangeForm_Business
 
 #Additional Email Confirmation Stuff
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.sites.shortcuts import get_current_site
@@ -59,6 +59,8 @@ class Modify_Volunteer(View):
     template_name = 'settings.html'
     
     def get(self, request, *args, **kwargs):
+        if(request.user.user_type != 'VO'):
+            return HttpResponseNotFound('<h1>Page not found</h1>')
         print(request.user.username)
         user = request.user
         form = self.form_class(instance=user)
@@ -79,6 +81,8 @@ class Modify_NGO(View):
     template_name = 'settings.html'
     
     def get(self, request, *args, **kwargs):
+        if(request.user.user_type != 'NG'):
+            return HttpResponseNotFound('<h1>Page not found</h1>')
         print(request.user.username)
         user = request.user
         form = self.form_class(instance=user)
@@ -100,6 +104,8 @@ class Modify_Business(View):
     template_name = 'settings.html'
     
     def get(self, request, *args, **kwargs):
+        if(request.user.user_type != 'BU'):
+            return HttpResponseNotFound('<h1>Page not found</h1>')
         print(request.user.username)
         user = request.user
         form = self.form_class(instance=user)

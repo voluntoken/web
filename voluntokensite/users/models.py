@@ -21,9 +21,13 @@ class CustomUser(AbstractUser):
     is_active  = models.BooleanField(default = True)
     
     #Volunteer Specific
-    volunteer_token       = models.FloatField(default=0.0)
-    volunteer_role        = models.CharField(max_length=2, null=True, default='DI')
-    volunteer_hour        = models.FloatField(default=0.0)
+    volunteer_token        = models.FloatField(default=0.0)
+    volunteer_role         = models.CharField(max_length=2, null=True, default='DI')
+    volunteer_hour         = models.FloatField(default=0.0)
+
+    #this will deplete as users spend tokens, different from volunteer_token because it can only be increased by volunteering
+    #useful for calculating percentages in each transactions 
+    volunteer_hour_fund    = models.FloatField(default=0.0) 
 
     #Parent References
     parent_business = models.ForeignKey('BUSINESS.business', on_delete=models.CASCADE, null=True, blank=True)
@@ -42,5 +46,12 @@ class total_hours_stub(models.Model):
     parent_volunteer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     parent_ngo       = models.ForeignKey('NGO.org', on_delete=models.CASCADE)
     total_hours      = models.FloatField(default=0.0)
+
+    #just like volunteer_hour_fund, this is useful to calculate percentages for each transaction
+    #will deplete with each transaction
+    total_hours_fund = models.FloatField(default=0.0)
+    
+
     total_donation_tokens = models.FloatField(default=0.0)
+    total_discount_tokens = models.FloatField(default=0.0)
 #----------------------------------------------------------------------------------------------------------------------------------------------------
