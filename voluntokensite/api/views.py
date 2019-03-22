@@ -450,7 +450,7 @@ class make_transaction_donation(APIView):
 		business_agent.total_hours     += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 
 		#Update Transaction Stub Instance
-		transaction_stub_instance      = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+		transaction_stub_instance      = transaction_stub.objects.create(is_donation=True,tokens_transferred = coupon_cost, item_cost = coupon_instance.item_cost,  parent_business =business_agent, parent_volunteer=volunteer)
 
 		#Update relevant total_support_stub's
 		total_hours_stub_set     = total_hours_stub.objects.filter(parent_volunteer=volunteer)
@@ -511,7 +511,7 @@ class make_transaction_discount(APIView):
 		business_agent.total_hours     += coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 
 		#Update Transaction Stub Instance
-		transaction_stub_instance      = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, parent_business =business_agent, parent_volunteer=volunteer)
+		transaction_stub_instance      = transaction_stub.objects.create(is_donation=False,tokens_transferred = coupon_cost, item_cost = coupon_instance.item_cost, parent_business =business_agent, parent_volunteer=volunteer)
 		
 		#Update relevant total_support_stub's
 		total_hours_stub_set     = total_hours_stub.objects.filter(parent_volunteer=volunteer)

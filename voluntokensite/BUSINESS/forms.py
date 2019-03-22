@@ -16,7 +16,7 @@ class couponDiscountCreationForm(ModelForm):
         
     class Meta:
         model  = coupon
-        fields = ('name', 'description', 'token_cost', 'is_active')
+        fields = ('name', 'description', 'token_cost', 'item_cost', 'is_active')
         
     def clean(self):
         self.instance.parent_business          = self.parent_business_name
@@ -26,7 +26,7 @@ class couponDiscountCreationForm(ModelForm):
 class couponDiscountChangeForm(ModelForm):
     class Meta:
         model  = coupon
-        fields = ('name', 'description', 'token_cost', 'is_active')
+        fields = ('name', 'description', 'token_cost', 'item_cost', 'is_active')
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #coupon Donation
@@ -38,7 +38,7 @@ class couponDonationCreationForm(ModelForm):
     
     class Meta:
         model  = coupon
-        fields = ('name', 'description', 'donation_val', 'is_active')
+        fields = ('name', 'description', 'donation_val', 'item_cost', 'is_active')
         
     def clean(self):
         self.instance.parent_business          = self.parent_business_name
@@ -49,7 +49,7 @@ class couponDonationCreationForm(ModelForm):
 class couponDonationChangeForm(ModelForm):
     class Meta:
         model  = coupon
-        fields = ('name', 'description', 'donation_val', 'is_active')
+        fields = ('name', 'description', 'donation_val', 'item_cost', 'is_active')
 
     def clean(self):
         self.instance.token_cost               = 1.0/EXCHANGE_RATE*self.cleaned_data.get('donation_val')

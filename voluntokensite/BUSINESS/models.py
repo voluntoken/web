@@ -52,6 +52,7 @@ class coupon(models.Model):
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
 	is_active            = models.BooleanField(default=True)
 	donation_val         = models.FloatField(default = 0.0) #only relevant if donation_or_discount is true (coupon is donation)
+	item_cost            = models.FloatField(default = 0.0)
 	
 	
 	def __str__(self):
@@ -64,6 +65,7 @@ class coupon(models.Model):
 class transaction_stub(models.Model):
 	is_donation          = models.BooleanField(default = True) #True: Donation, False: Discount
 	tokens_transferred   = models.FloatField(default = 0.0) #tokens given to business for donation/discount
+	item_cost            = models.FloatField(default = 0.0) #estimated item cost 
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
 	parent_volunteer     = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 #----------------------------------------------------------------------------------------------------------------------------------------------------	
