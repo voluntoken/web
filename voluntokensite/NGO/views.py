@@ -141,7 +141,7 @@ class Show_Events(View):
 
 class Create_Event(View):
 	form_class = eventCreationForm
-	success_url = reverse_lazy('')
+	success_url = 'see_events'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -154,19 +154,21 @@ class Create_Event(View):
 		return render(request, self.template_name, {'form': form, 'title':"Event Creation",'submit_text':"create"})
 		
 	def post(self, request, *args, **kwargs):
+		if(request.user.user_type != 'NG'):
+			return HttpResponseNotFound('<h1>Page not found</h1>')
 		user_ngo_id = request.user.parent_ngo
 		form = self.form_class(request.POST, parent_ngo_name=user_ngo_id)
 		if form.is_valid():
 			form.save()
 			# <process form cleaned data>
-			return render(request, 'NGO_home.html', {})
+			return redirect(self.success_url)
 
-		return render(request, self.template_name, {'form': form})
+		return render(request, self.template_name, {'form': form, 'title':"Event Creation",'submit_text':"create"})
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 class Change_Event(View):
 	form_class = eventChangeForm
-	success_url = reverse_lazy('')
+	success_url = 'see_events'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -195,7 +197,7 @@ class Change_Event(View):
 		form = self.form_class(request.POST, instance=event_obj)			
 		if form.is_valid():
 			form.save()
-			return HttpResponseRedirect(reverse('see_events'))
+			return redirect(self.success_url)
 
 		return render(request, self.template_name, {'form': form})
 

@@ -5,6 +5,8 @@ from random import randint
 from django import forms
 import os
 
+def rand_int():
+	return randint(1000,9999)
 
 def get_image_path(instance, filename):
 	return os.path.join('photos', str(instance.id), filename)
@@ -36,8 +38,8 @@ class event(models.Model):
 	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 	parent_ngo      = models.ForeignKey(org, on_delete=models.CASCADE)
 	qr_code         = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	pin_checkin     = models.IntegerField(default=randint(1000,9999))
-	pin_checkout    = models.IntegerField(default=randint(1000,9999))
+	pin_checkin     = models.IntegerField(default=rand_int)
+	pin_checkout    = models.IntegerField(default=rand_int)
 	is_active       = models.BooleanField(default=True)
 	volunteer_hour  = models.FloatField(default=0.0)
 
@@ -46,12 +48,12 @@ class event(models.Model):
 	end_time     = models.DateTimeField(default=datetime.utcnow)
 
 
-	#NEEDS TESTING -------------------------------------------------
-	#Check ifstop_time - start_time is positive
-	if  start_time >= end_time:
-		raise forms.ValidationError("The end time of your event must be after the start time!")
+	# #NEEDS TESTING -------------------------------------------------
+	# #Check ifstop_time - start_time is positive
+	# if  start_time > end_time:
+	# 	raise forms.ValidationError("The end time of your event must be after the start time!")
 
-	#---------------------------------------------------------------
+	# #---------------------------------------------------------------
 
 	def __str__(self):
 		return self.name

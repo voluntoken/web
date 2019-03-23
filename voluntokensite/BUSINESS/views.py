@@ -135,7 +135,7 @@ class Show_Coupon(View):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class Create_Coupon_Discount(View):
 	form_class = couponDiscountCreationForm
-	success_url = reverse_lazy('')
+	success_url = 'see_coupons'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -153,13 +153,13 @@ class Create_Coupon_Discount(View):
 		if form.is_valid():
 			form.save()
 			# <process form cleaned data>
-			return render(request, 'business_home.html', {})
+			return redirect(self.success_url)
 
-		return render(request, self.template_name, {'form': form})
+		return render(request, self.template_name, {'form': form, 'title':"Discount Creation",'submit_text':"create"})
 
 class Create_Coupon_Donation(View):
 	form_class = couponDonationCreationForm
-	success_url = reverse_lazy('')
+	success_url = 'see_coupons'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -176,9 +176,9 @@ class Create_Coupon_Donation(View):
 		if form.is_valid():
 			form.save()
 			# <process form cleaned data>
-			return render(request, 'business_home.html', {})
+			return redirect(self.success_url)
 
-		return render(request, self.template_name, {'form': form})
+		return render(request, self.template_name, {'form': form, 'title':"Donation Creation",'submit_text':"create"})
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #EDIT Coupon
@@ -224,7 +224,7 @@ def activate_coupon(request,coupon_id =None, end_route='see_coupons'):
 
 class Coupon_Discount_Edit(View):
 	form_class = couponDiscountChangeForm
-	success_url = reverse_lazy('')
+	success_url = 'see_coupons'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -237,7 +237,7 @@ class Coupon_Discount_Edit(View):
 		if (coupon_obj.parent_business != request.user.parent_business):
 			return HttpResponse('<h1> Access Denied </h1>', status=403)
 		form = self.form_class(instance=coupon_obj)
-		return render(request, self.template_name, {'form': form, 'title':"Coupon Modification",'submit_text':"save"})
+		return render(request, self.template_name, {'form': form, 'title':"Discount Coupon Modification",'submit_text':"save"})
 		
 	def post(self, request, *args, **kwargs):
 		try:
@@ -251,12 +251,12 @@ class Coupon_Discount_Edit(View):
 		form = self.form_class(request.POST,instance=coupon_obj)
 		if form.is_valid():
 			form.save()
-			return HttpResponseRedirect(reverse('see_coupons'))
-		return render(request, self.template_name, {'form': form})
+			return redirect(self.success_url)
+		return render(request, self.template_name, {'form': form, 'title':"Discount Coupon Modification",'submit_text':"save"})
 
 class Coupon_Donation_Edit(View):
 	form_class = couponDonationChangeForm
-	success_url = reverse_lazy('')
+	success_url = 'see_coupons'
 	template_name = 'form.html'
 	
 	def get(self, request, *args, **kwargs):
@@ -270,7 +270,7 @@ class Coupon_Donation_Edit(View):
 			return HttpResponse('<h1> Access Denied </h1>', status=403)
 		
 		form = self.form_class(instance=coupon_obj)
-		return render(request, self.template_name, {'form': form, 'title':"Coupon Modification",'submit_text':"save"})
+		return render(request, self.template_name, {'form': form, 'title':"Donation Coupon Modification",'submit_text':"save"})
 		
 	def post(self, request, *args, **kwargs):
 		try:
@@ -283,6 +283,6 @@ class Coupon_Donation_Edit(View):
 		form = self.form_class(request.POST,instance=coupon_obj)
 		if form.is_valid():
 			form.save()
-			return HttpResponseRedirect(reverse('see_coupons'))
-		return render(request, self.template_name, {'form': form})
+			return redirect(self.success_url)
+		return render(request, self.template_name, {'form': form, 'title':"Donation Coupon Modification",'submit_text':"save"})
 #----------------------------------------------------------------------------------------------------------------------------------------------------

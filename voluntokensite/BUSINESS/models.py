@@ -4,6 +4,9 @@ from NGO.models  import org
 from random import randint
 import os
 
+def rand_int():
+	return randint(1000,9999)
+
 #exchange rate
 EXCHANGE_TOKEN_HOUR = 1.0 #units = token/hour
 EXCHANGE_USD_TOKEN  = 5.0 #units = USD/token
@@ -33,7 +36,7 @@ class business(models.Model):
 	discount_tokens = models.FloatField(default=0.0)
 	total_profit    = models.FloatField(default=0.0)
 	qr_code         = models.ImageField(upload_to= get_image_path, blank=True, null=True)
-	pin             = models.IntegerField(default=randint(1000,9999))
+	pin             = models.IntegerField(default=rand_int)
 	def __str__(self):
 		return self.name
 #----------------------------------------------------------------------------------------------------------------------------------------------------

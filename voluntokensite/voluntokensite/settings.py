@@ -181,5 +181,6 @@ os.makedirs(STATIC_ROOT, exist_ok=True)
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+USE_L10N = True
 
 django_heroku.settings(locals())
