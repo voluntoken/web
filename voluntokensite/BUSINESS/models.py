@@ -6,6 +6,7 @@ import os
 
 #exchange rate
 EXCHANGE_TOKEN_HOUR = 1.0 #units = token/hour
+EXCHANGE_USD_TOKEN  = 5.0 #units = USD/token
 
 #image stuff
 def get_image_path(instance, filename):
@@ -27,9 +28,10 @@ class business(models.Model):
 	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	#Donations, Discounts Metrics
-	total_hours     = models.FloatField(default=0.0) 
+	total_hours     = models.FloatField(default=0.0)
 	donation_tokens = models.FloatField(default=0.0) 
 	discount_tokens = models.FloatField(default=0.0)
+	total_profit    = models.FloatField(default=0.0)
 	qr_code         = models.ImageField(upload_to= get_image_path, blank=True, null=True)
 	pin             = models.IntegerField(default=randint(1000,9999))
 	def __str__(self):
@@ -68,6 +70,7 @@ class coupon(models.Model):
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class transaction_stub(models.Model):
 	is_donation          = models.BooleanField(default = True) #True: Donation, False: Discount
+	coupon_used          = models.ForeignKey(coupon, on_delete=models.SET_NULL, null=True, blank=True)
 	tokens_transferred   = models.FloatField(default = 0.0) #tokens given to business for donation/discount
 	item_cost            = models.FloatField(default = 0.0) #estimated item cost 
 	parent_business      = models.ForeignKey(business, on_delete=models.CASCADE)
@@ -85,6 +88,7 @@ class total_support_stub(models.Model):
 
     #number of transactions through which businesses have supported this NGO
     total_transactions    = models.IntegerField(default=0.0)
+    total_profit          = models.FloatField(default=0.0)
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #Keeps track of how many hours of volunteering, discount tokens, and donation tokens a user has spent at a business to support a specific NGO

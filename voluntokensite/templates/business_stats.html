@@ -13,6 +13,7 @@
 	        <th>Discounts Given (V) </th>
 	        <th>Customers Obtained (#)</th>
 	        <th>Total Transactions (#)</th>
+	        <th>Total Revenue ($)</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -23,7 +24,7 @@
 	        <td>{{x.donations}} </td>
 	        <td>{{x.discounts}} </td>
 	        <td>{{x.number_customers}} </td>
-	        <td>{{x.number_transactions}} </td>
+	        <td>{{x.total_profit}} </td>
 	        <td></td>
 	      </tr>
 	    {% endfor %}
@@ -31,43 +32,115 @@
 	  </table>
 	</div>
 
-		<!-- {% for x in coupons%}
-					
-				<div style="outline: 5px solid black;">	
-					{{x}}
-					<br>{{x.description}}
-					<br>
-					 
-					
-					{% if x.is_donation == False %}		
-						<a href="{% url 'coupon_dis_edit' x.id %}">
-							 EDIT
-						</a> 		
-						
-						<a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
-							 DELETE
-						</a> 	
-									
-					{%else%}
-						<a href="{% url 'coupon_don_edit' x.id %}">
-							 EDIT
-						</a> 		
-						
-						<a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
-							 DELETE
-						</a> 	
-						
-					{% endif %}
-					
+	<div class="container">
+	  <h3>Donation Coupon Stats</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Donations Pledged ($)</th>
+	        <th>Volunteering Supported (hours)</th>
+	        <th>Times Used (#)</th>
+	        <th>Unique Customers (#)</th>
+	        <th>Average Customer Use (#)</th>
+	        <th>Estimated Total Revenue ($)</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in donation_coupons %}
+	      <tr>
+	        <td><a href="{% url 'coupon_don_edit' x.id %}">{{x.name}}</a></td>
+	        <td>{{x.donations}} </td>
+	        <td>{{x.hours}}</td>
+	        <td>{{x.times_used}} </td>
+	        <td>{{x.number_customers}} </td>
+	        <td>{{x.customer_average_use}} </td>
+	        <td>{{x.total_profit}} </td>
+	      </tr>
+	    {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
 
-					
-					
-				</div>
-				
-				<br>
-				<br>
-				
-		{% endfor %} -->
+	<div class="container">
+	  <h3>Discount Coupon Stats</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>Coupon</th>
+	        <th>Discount Tokens Gotten (V)</th>
+	        <th>Volunteering Supported (hours)</th>
+	        <th>Times Used (#)</th>
+	        <th>Unique Customers (#)</th>
+	        <th>Average Customer Use (#)</th>
+	        <th>Estimated Total Revenue ($)</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	    {% for x in discount_coupons %}
+	      <tr>
+	        <td><a href="{% url 'coupon_dis_edit' x.id %}">{{x.name}}</a></td>
+	        <td>{{x.discounts}} </td>
+	        <td>{{x.hours}}</td>
+	        <td>{{x.times_used}} </td>
+	        <td>{{x.number_customers}} </td>
+	        <td>{{x.customer_average_use}} </td>
+	        <td>{{x.total_profit}} </td>
+	      </tr>
+	    {% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+
+<!-- 	total.['hours']  = business_instance.total_hours
+		transaction_set  = transaction_stub.objects.filter(parent_business=business_instance)
+		num_customer_ids = len(np.unique(np.array([x.parent_volunteer.id for x in transaction_set])))
+		num_coupon_ids   = len(transaction_set)
+		total.['number_customers'] = num_customer_ids
+		total.['total_profit']     = business_instance.total_profit
+		total.['transactions']     = num_coupon_ids
+		total.['donations']        = business_instance.donation_tokens*EXCHANGE_USD_TOKEN
+		total.['discounts']        = business_instance.discount_tokens -->
+	
+	<div class="container">
+	  <h3>TOTALS</h3>            
+	  <table class="table table-dark table-hover">
+	    <thead>
+	      <tr>
+	        <th>TOTAL</th>
+	        <th>VALUE</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr>
+	        <td> Volunteering Supported (Hours)</td>
+	        <td> {{total.hours}}</td>
+	      </tr>
+	      <tr>
+	        <td> Total Unique Customers (#)</td>
+	        <td> {{total.number_customers}}</td>
+	      </tr>
+	      <tr>
+	        <td> Estimated Total Revenue ($)</td>
+	        <td> {{total.total_profit}}</td>
+	      </tr>
+	      <tr>
+	        <td> Total Transactions (#)</td>
+	        <td> {{total.transactions}}</td>
+	      </tr>
+	      <tr>
+	        <td> Donations Pledged ($)</td>
+	        <td> {{total.donations}}</td>
+	      </tr>
+	      <tr>
+	        <td> Discount Tokens Gotten (V)</td>
+	        <td> {{total.discounts}}</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+
+
 
 
 		<a href="{% url 'home' %}">
