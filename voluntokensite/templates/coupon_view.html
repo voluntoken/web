@@ -13,7 +13,6 @@
 	        <th>Description</th>
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
-	        <th> EDIT </th>
 	        <th> DEACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
@@ -22,13 +21,13 @@
 	    {% for x in coupons%}
 	    	{% if x.is_donation == False and x.is_active == True%}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
+							 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.token_cost}}</td>
 	        		<td>{{x.item_cost}}</td>
-	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
-							 EDIT
-						</a> </td>
+	        		
 					<td> <a href="{% url 'deactivate_coupon' x.id 'see_coupons' %}">
 							 DEACTIVATE
 						</a> </td>
@@ -40,7 +39,6 @@
 	    {% endfor %}
 	    	<tr>
 	        		<td><a href="{% url 'create_coupons_dis' %}"> CREATE NEW</a></td>
-	        		<td></td>
 	        		<td></td>
 	        		<td></td>
 	        		<td></td>
@@ -59,7 +57,6 @@
 	        <th>Description</th>
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
-	        <th> EDIT </th>
 	        <th> ACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
@@ -68,13 +65,13 @@
 	    {% for x in coupons%}
 	    	{% if x.is_donation == False and x.is_active == False%}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
+							 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.token_cost}}</td>
 	        		<td>{{x.item_cost}}</td>
-	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
-							 EDIT
-						</a> </td>
+	        		
 					<td> <a href="{% url 'activate_coupon' x.id 'see_coupons' %}">
 							 ACTIVATE
 						</a> </td>
@@ -102,7 +99,6 @@
 	        <th>Donation Pledge ($)</th>
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
-	        <th> EDIT </th>
 	        <th> DEACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
@@ -111,14 +107,13 @@
 	    {% for x in coupons%}
 	    	{% if x.is_donation == True and x.is_active == True%}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
+							 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.donation_val}}</td>
 	        		<td>{{x.token_cost}}</td>
 	        		<td>{{x.item_cost}}</td>
-	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
-							 EDIT
-						</a> </td>
 					<td> <a href="{% url 'deactivate_coupon' x.id 'see_coupons' %}">
 							 DEACTIVATE
 						</a> </td>
@@ -130,7 +125,6 @@
 	    {% endfor %}
 	    	<tr>
 	        		<td><a href="{% url 'create_coupons_don' %}"> CREATE NEW</a></td>
-	        		<td></td>
 	        		<td></td>
 	        		<td></td>
 	        		<td></td>
@@ -161,14 +155,13 @@
 	    {% for x in coupons%}
 	    	{% if x.is_donation == True and x.is_active == False%}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
+							 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.donation_val}}</td>
 	        		<td>{{x.token_cost}}</td>
 	        		<td>{{x.item_cost}}</td>
-	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
-							 EDIT
-						</a> </td>
 					<td> <a href="{% url 'activate_coupon' x.id 'see_coupons' %}">
 							 ACTIVATE
 						</a> </td>
@@ -182,6 +175,7 @@
 	  </table>
 	</div>
 	
+	<h2> PIN: {{business_pin}} </h2>
 
 	<h2 align="center">
 	<a href="{% url 'home' %}">

@@ -474,6 +474,9 @@ class make_transaction_donation(APIView):
 			total_hours_stub_instance.total_hours_fund = total_hours_stub_instance.total_hours_fund - percentage*coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 
 
+			#Update total_hours_stub_instance for specific ngo and user - how much user has supported specific ngo
+			total_hours_stub_instance.total_donation_tokens   += percentage*coupon_cost			
+
 			#Update NGO donation tokens received
 			ngo_instance.total_donation_tokens         += percentage*coupon_cost
 
@@ -487,13 +490,7 @@ class make_transaction_donation(APIView):
 			total_support_stub_instance.total_transactions    += 1
 			total_support_stub_instance.total_profit          += percentage*coupon_instance.item_cost
 
-			#Update total_hours_stub_instance for specific ngo and user - how much user has supported specific ngo
-			try:
-				total_hours_stub_instance   = total_hours_stub.objects.get(parent_ngo=ngo_instance, parent_volunteer=volunteer)
-			except total_hours_stub.DoesNotExist:
-				total_hours_stub_instance   = total_hours_stub.objects.create(parent_ngo=ngo_instance, parent_volunteer=volunteer)
-
-			total_hours_stub_instance.total_donation_tokens   += percentage*coupon_cost			
+			
 			
 			#Update user_support_stub for specific user, ngo, and business - how much user has supported specific ngo by spending at a specific business
 			try:
@@ -564,6 +561,10 @@ class make_transaction_discount(APIView):
 			volunteer.volunteer_hour_fund              = volunteer.volunteer_hour_fund  - percentage*coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 			total_hours_stub_instance.total_hours_fund = total_hours_stub_instance.total_hours_fund - percentage*coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 
+			#Update total_hours_stub_instance for specific ngo and user - how much user has supported specific ngo
+			total_hours_stub_instance.total_donation_tokens   += percentage*coupon_cost			
+			
+
 			#Update total_support_stub_instance for specific ngo and business - how much business has supported specific ngo
 			try:
 				total_support_stub_instance = total_support_stub.objects.get(parent_business=business_agent, parent_ngo=ngo_instance)
@@ -573,14 +574,6 @@ class make_transaction_discount(APIView):
 			total_support_stub_instance.total_discount_tokens += percentage*coupon_cost
 			total_support_stub_instance.total_transactions    += 1
 			total_support_stub_instance.total_profit          += percentage*coupon_instance.item_cost
-
-			#Update total_hours_stub_instance for specific ngo and user - how much user has supported specific ngo
-			try:
-				total_hours_stub_instance   = total_hours_stub.objects.get(parent_ngo=ngo_instance, parent_volunteer=volunteer)
-			except total_hours_stub.DoesNotExist:
-				total_hours_stub_instance   = total_hours_stub.objects.create(parent_ngo=ngo_instance, parent_volunteer=volunteer)
-
-			total_hours_stub_instance.total_discount_tokens   += percentage*coupon_cost
 			
 
 			#Update user_support_stub for specific user, ngo, and business - how much user has supported specific ngo by spending at a specific business

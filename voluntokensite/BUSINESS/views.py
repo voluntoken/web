@@ -125,9 +125,10 @@ class Show_Coupon(View):
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'BU'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
-		user_business_id = request.user.parent_business		
-		coupon_list = coupon.objects.filter(parent_business=user_business_id)
-		return render(request, self.template_name, {'title':"Coupons","coupons":coupon_list})		
+		user_business    = request.user.parent_business		
+		business_pin     = request.user.parent_business.pin
+		coupon_list = coupon.objects.filter(parent_business=user_business)
+		return render(request, self.template_name, {'title':"Coupons","coupons":coupon_list, "business_pin":business_pin})		
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
 #CREATE Coupon
