@@ -12,7 +12,7 @@ class eventCreationForm(ModelForm):
         
     class Meta:
         model  = event
-        fields = ('name', 'description', 'is_active', 'start_time', 'end_time')
+        fields = ('name', 'description', 'is_active', 'start_time', 'end_time','pin_checkin', 'pin_checkout')
         
     def clean(self):
         self.instance.parent_ngo = self.parent_ngo_name
@@ -21,7 +21,7 @@ class eventCreationForm(ModelForm):
 class eventChangeForm(ModelForm):
     class Meta:
         model  = event
-        fields = ('name', 'description', 'is_active', 'start_time', 'end_time')
+        fields = ('name', 'description', 'is_active', 'start_time', 'end_time', 'pin_checkin', 'pin_checkout')
         
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -26,9 +26,8 @@ class Show_Events(View):
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'NG'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
-		user_ngo_id = request.user.parent_ngo		
-		event_list = event.objects.filter(parent_ngo=user_ngo_id)
-		print(event_list)
+		user_ngo = request.user.parent_ngo		
+		event_list = event.objects.filter(parent_ngo=user_ngo)
 		return render(request, self.template_name, {'title':"Events","events":event_list})
 			
 

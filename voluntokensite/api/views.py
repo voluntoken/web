@@ -207,7 +207,13 @@ class make_checkout(APIView):
 		check_out_time = time_now
 
 		hours_spent    = ((check_out_time - check_in_time).total_seconds())/(60.0*60.0)
-		new_hours_stub = event_hours_spent_stub.objects.create(parent_event=event_instance, parent_volunteer=self.request.user, hours=hours_spent)		
+		
+		try:
+			new_hours_stub = event_hours_spent_stub.objects.get(parent_event=event_instance, parent_volunteer=self.request.user)
+		except event_hours_spent_stub.DoesNotExist:
+			new_hours_stub = event_hours_spent_stub.objects.create(parent_event=event_instance, parent_volunteer=self.request.user)
+		new_hours_stub.hours += hours_spent
+
 		
 
 		#Update NGO Volunteer Hours
