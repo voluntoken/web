@@ -21,9 +21,9 @@ class View_Stats(View):
 		if(request.user.user_type != 'BU'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
 
-		#Table of NGOs Supported: ngos_supported
 		business_instance = request.user.parent_business
-		
+
+		#Table of NGOs Supported: ngos_supported
 		total_support_stub_set = total_support_stub.objects.filter(parent_business=business_instance)
 		ngos_supported = []#array of dicts - ngo_support_info
 
@@ -41,6 +41,7 @@ class View_Stats(View):
 
 			ngos_supported.append(ngo_support_info)
 
+		#Table of Donation Coupon STATS	
 		donation_coupons = []
 		donation_coupon_set = coupon.objects.filter(parent_business=business_instance, is_donation=True)
 
@@ -48,7 +49,7 @@ class View_Stats(View):
 			coupon_info = {}
 			coupon_info['name']      = coupon_instance.name
 			coupon_info['id']        = coupon_instance.id
-
+			coupon_info['is_active'] = coupon_instance.is_active
 			#all the transactions using this coupon that are donations, a bit of a redundant filter
 			transaction_set                 = transaction_stub.objects.filter(parent_business=business_instance, coupon_used=coupon_instance, is_donation=True)
 			customer_ids                    = np.unique(np.array([x.parent_volunteer.id for x in transaction_set]))
@@ -68,6 +69,7 @@ class View_Stats(View):
 			donation_coupons.append(coupon_info)
 
 
+		#Table of Discount Coupon STATS
 		discount_coupons = []
 		discount_coupon_set = coupon.objects.filter(parent_business=business_instance, is_donation=False)
 
@@ -75,7 +77,8 @@ class View_Stats(View):
 			coupon_info = {}
 			coupon_info['name']      = coupon_instance.name
 			coupon_info['id']        = coupon_instance.id
-
+			coupon_info['is_active'] = coupon_instance.is_active
+			
 			#all the transactions using this coupon that are donations, a bit of a redundant filter
 			transaction_set                 = transaction_stub.objects.filter(parent_business=business_instance, coupon_used=coupon_instance, is_donation=False)
 			customer_ids                    = np.unique(np.array([x.parent_volunteer.id for x in transaction_set]))
@@ -94,6 +97,7 @@ class View_Stats(View):
 
 			discount_coupons.append(coupon_info)
 
+		#Table Total Stats
 		total = {}
 		total['hours']  = business_instance.total_hours
 		transaction_set  = transaction_stub.objects.filter(parent_business=business_instance)
@@ -160,8 +164,7 @@ class Create_Coupon_Donation(View):
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'BU'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
-		# print(request.user.username)
-		# print(request.user.parent_business)
+
 		user_business_id = request.user.parent_business
 		form = self.form_class(parent_business_name=user_business_id)
 		return render(request, self.template_name, {'form': form, 'title':"Donation Creation",'submit_text':"create"})
@@ -180,8 +183,42 @@ class Create_Coupon_Donation(View):
 #EDIT Coupon
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 def delete_coupon(request,coupon_id =None, end_route='see_coupons'):
-	coupon_obj = coupon.objects.get(id=coupon_id)
+	try:
+		coupon_obj = coupon.objects.get(id=coupon_id)
+	except coupon.DoesNotExist:
+		return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+
+	if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+
 	coupon_obj.delete()
+
+	return HttpResponseRedirect(reverse(end_route))
+
+def deactivate_coupon(request,coupon_id =None, end_route='see_coupons'):
+	try:
+		coupon_obj = coupon.objects.get(id=coupon_id)
+	except coupon.DoesNotExist:
+		return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+
+	if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+
+	coupon_obj.is_active = False
+	coupon_obj.save()
+	return HttpResponseRedirect(reverse(end_route))
+
+def activate_coupon(request,coupon_id =None, end_route='see_coupons'):
+	try:
+		coupon_obj = coupon.objects.get(id=coupon_id)
+	except coupon.DoesNotExist:
+		return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+
+	if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+		
+	coupon_obj.is_active = True
+	coupon_obj.save()
 	return HttpResponseRedirect(reverse(end_route))
 
 class Coupon_Discount_Edit(View):
@@ -192,12 +229,24 @@ class Coupon_Discount_Edit(View):
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'BU'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
-		coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'])
+		try:
+			coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'], is_donation=False)
+		except coupon.DoesNotExist:
+			return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+		if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
 		form = self.form_class(instance=coupon_obj)
 		return render(request, self.template_name, {'form': form, 'title':"Coupon Modification",'submit_text':"save"})
 		
 	def post(self, request, *args, **kwargs):
-		coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'])
+		try:
+			coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'], is_donation=False)
+		except coupon.DoesNotExist:
+			return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+		
+		if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+
 		form = self.form_class(request.POST,instance=coupon_obj)
 		if form.is_valid():
 			form.save()
@@ -212,12 +261,24 @@ class Coupon_Donation_Edit(View):
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'BU'):
 			return HttpResponseNotFound('<h1>Page not found</h1>')
-		coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'])
+		try:
+			coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'], is_donation=True)
+		except coupon.DoesNotExist:
+			return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+		if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+		
 		form = self.form_class(instance=coupon_obj)
 		return render(request, self.template_name, {'form': form, 'title':"Coupon Modification",'submit_text':"save"})
 		
 	def post(self, request, *args, **kwargs):
-		coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'])
+		try:
+			coupon_obj = coupon.objects.get(id=self.kwargs['coupon_id'], is_donation=True)
+		except coupon.DoesNotExist:
+			return HttpResponseNotFound('<h1>Coupon Does Not Exist</h1>')
+		if (coupon_obj.parent_business != request.user.parent_business):
+			return HttpResponse('<h1> Access Denied </h1>', status=403)
+		
 		form = self.form_class(request.POST,instance=coupon_obj)
 		if form.is_valid():
 			form.save()

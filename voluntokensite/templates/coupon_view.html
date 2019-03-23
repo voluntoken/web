@@ -14,6 +14,7 @@
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
 	        <th> EDIT </th>
+	        <th> DEACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -28,7 +29,10 @@
 	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
 							 EDIT
 						</a> </td>
-					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
+					<td> <a href="{% url 'deactivate_coupon' x.id 'see_coupons' %}">
+							 DEACTIVATE
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons' %}" onclick="return confirm('Useful statistical data relating to this coupon will be deleted and impossible to recover with the deletion of this coupon. Instead, we suggest *deactivation* of obselete coupons. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>
@@ -36,6 +40,7 @@
 	    {% endfor %}
 	    	<tr>
 	        		<td><a href="{% url 'create_coupons_dis' %}"> CREATE NEW</a></td>
+	        		<td></td>
 	        		<td></td>
 	        		<td></td>
 	        		<td></td>
@@ -55,6 +60,7 @@
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
 	        <th> EDIT </th>
+	        <th> ACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -69,7 +75,10 @@
 	        		<td> <a href="{% url 'coupon_dis_edit' x.id %}">
 							 EDIT
 						</a> </td>
-					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_dis' %}">
+					<td> <a href="{% url 'activate_coupon' x.id 'see_coupons' %}">
+							 ACTIVATE
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons' %}" onclick="return confirm('Useful statistical data relating to this coupon will be deleted and impossible to recover with the deletion of this coupon. Instead, we suggest *deactivation* of obselete coupons. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>
@@ -94,6 +103,7 @@
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
 	        <th> EDIT </th>
+	        <th> DEACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -109,7 +119,10 @@
 	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
 							 EDIT
 						</a> </td>
-					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
+					<td> <a href="{% url 'deactivate_coupon' x.id 'see_coupons' %}">
+							 DEACTIVATE
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons' %}" onclick="return confirm('Useful statistical data relating to this coupon will be deleted and impossible to recover with the deletion of this coupon. Instead, we suggest *deactivation* of obselete coupons. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>
@@ -117,6 +130,7 @@
 	    {% endfor %}
 	    	<tr>
 	        		<td><a href="{% url 'create_coupons_don' %}"> CREATE NEW</a></td>
+	        		<td></td>
 	        		<td></td>
 	        		<td></td>
 	        		<td></td>
@@ -139,6 +153,7 @@
 	        <th>Token Price (V)</th>
 	        <th>Approximate Item Profit ($)</th>
 	        <th> EDIT </th>
+	        <th> ACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -154,7 +169,10 @@
 	        		<td> <a href="{% url 'coupon_don_edit' x.id %}">
 							 EDIT
 						</a> </td>
-					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons_don' %}">
+					<td> <a href="{% url 'activate_coupon' x.id 'see_coupons' %}">
+							 ACTIVATE
+						</a> </td>
+					<td> <a href="{% url 'delete_coupon' x.id 'see_coupons' %}" onclick="return confirm('Useful statistical data relating to this coupon will be deleted and impossible to recover with the deletion of this coupon. Instead, we suggest *deactivation* of obselete coupons. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>

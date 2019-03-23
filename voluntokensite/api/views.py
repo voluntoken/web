@@ -113,9 +113,6 @@ class get_user(generics.RetrieveAPIView):
 
 #Home Page API Routes
 #----------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
 class make_checkin(APIView):
 	def post(self, request):
 		event_id        = request.data['event_id']
@@ -477,6 +474,9 @@ class make_transaction_donation(APIView):
 			total_hours_stub_instance.total_hours_fund = total_hours_stub_instance.total_hours_fund - percentage*coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 
 
+			#Update NGO donation tokens received
+			ngo_instance.total_donation_tokens         += percentage*coupon_cost
+
 			#Update total_support_stub_instance for specific ngo and business - how much business has supported specific ngo
 			try:
 				total_support_stub_instance = total_support_stub.objects.get(parent_business=business_agent, parent_ngo=ngo_instance)
@@ -503,6 +503,7 @@ class make_transaction_donation(APIView):
 			user_support_stub_instance.total_hours            += percentage*coupon_cost*1.0/(EXCHANGE_TOKEN_HOUR)
 			user_support_stub_instance.total_donation_tokens  += percentage*coupon_cost
 
+			ngo_instance.save()
 			user_support_stub_instance.save()
 			total_hours_stub_instance.save()
 			total_support_stub_instance.save()

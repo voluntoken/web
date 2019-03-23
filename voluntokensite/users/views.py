@@ -24,7 +24,7 @@ from django.views import View
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 def home_page(request):
     context = {}
-    print("Redirecting to right page!")
+    # print("Redirecting to right page!")
 
     if request.user.is_authenticated:
         if request.user.user_type == "VO":

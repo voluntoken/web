@@ -13,7 +13,7 @@
 	        <th>Discounts Given (V) </th>
 	        <th>Customers Obtained (#)</th>
 	        <th>Total Transactions (#)</th>
-	        <th>Total Revenue ($)</th>
+	        <th>Estimated Total Revenue ($)</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -24,8 +24,9 @@
 	        <td>{{x.donations}} </td>
 	        <td>{{x.discounts}} </td>
 	        <td>{{x.number_customers}} </td>
+	        <td>{{x.number_transactions}}</td>
 	        <td>{{x.total_profit}} </td>
-	        <td></td>
+	        
 	      </tr>
 	    {% endfor %}
 	    </tbody>
@@ -44,6 +45,7 @@
 	        <th>Unique Customers (#)</th>
 	        <th>Average Customer Use (#)</th>
 	        <th>Estimated Total Revenue ($)</th>
+	        <th>DE/ACTIVATE</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -56,6 +58,15 @@
 	        <td>{{x.number_customers}} </td>
 	        <td>{{x.customer_average_use}} </td>
 	        <td>{{x.total_profit}} </td>
+	        {%if x.is_active == True %}
+	        	<td> <a href="{% url 'deactivate_coupon' x.id 'business_stats' %}">
+						 DEACTIVATE
+						</a> </td>
+	        {% elif x.is_active == False %}
+	        	<td> <a href="{% url 'activate_coupon' x.id 'business_stats' %}">
+						 ACTIVATE
+						</a> </td>
+	        {% endif %}
 	      </tr>
 	    {% endfor %}
 	    </tbody>
@@ -74,6 +85,7 @@
 	        <th>Unique Customers (#)</th>
 	        <th>Average Customer Use (#)</th>
 	        <th>Estimated Total Revenue ($)</th>
+	        <th>DE/ACTIVATE</th>
 	      </tr>
 	    </thead>
 	    <tbody>
@@ -86,6 +98,15 @@
 	        <td>{{x.number_customers}} </td>
 	        <td>{{x.customer_average_use}} </td>
 	        <td>{{x.total_profit}} </td>
+	        {%if x.is_active == True %}
+	        	<td> <a href="{% url 'deactivate_coupon' x.id 'business_stats' %}">
+						 DEACTIVATE
+						</a> </td>
+	        {% elif x.is_active == False %}
+	        	<td> <a href="{% url 'activate_coupon' x.id 'business_stats' %}">
+						 ACTIVATE
+						</a> </td>
+	        {% endif %}
 	      </tr>
 	    {% endfor %}
 	    </tbody>

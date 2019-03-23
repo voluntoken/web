@@ -20,6 +20,7 @@ class org(models.Model):
 	address     = models.CharField(max_length = 500)
 	is_active   = models.BooleanField(default=True)
 	volunteer_hour = models.FloatField(default=0.0)
+	total_donation_tokens = models.FloatField(default=0.0)
 	#picture     = models.ImageField(upload_to=get_image_path, blank=True, null=True)
 
 	def __str__(self):

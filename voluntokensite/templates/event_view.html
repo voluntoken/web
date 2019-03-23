@@ -1,45 +1,7 @@
 {% extends 'base.html' %}
 {% block title %} {{title}}{% endblock %}
 {% block content %}
-
-<!-- #Profile Info
-	name            = models.CharField(max_length = 200)
-	description     = models.CharField(max_length = 2500)
-	#picture        = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	parent_ngo      = models.ForeignKey(org, on_delete=models.CASCADE)
-	qr_code         = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-	pin_checkin     = models.IntegerField(default=randint(1000,9999))
-	pin_checkout    = models.IntegerField(default=randint(1000,9999))
-	is_active       = models.BooleanField(default=True)
-	volunteer_hour  = models.FloatField(default=0.0)
-
-	#Timing
-	start_time   = models.DateTimeField(default=datetime.utcnow)
-	end_time     = models.DateTimeField(default=datetime.utcnow) -->
-
-	<!-- <h2 align="center">{{title}}</h2>
-	
-		{% for x in events %}
-					
-				<div style="outline: 5px solid black;">	
-					{{x}}
-					<br>{{x.description}}
-					<br>
-					 
-					<a href="{% url 'edit_event' x.id %}">
-						 EDIT
-					</a> 		
-					
-					<a href="{% url 'delete_event' x.id %}">
-						 DELETE
-					</a> 						
-				</div>
-				
-				<br>
-				<br>
-				
-		{% endfor %} -->
-
+	<h2 align="center">Events </h2>
 	<div class="container">
 	  <h3>Active Events</h3>            
 	  <table class="table table-dark table-hover">
@@ -51,7 +13,7 @@
 	        <th>Check-Out Pin</th>
 	        <th>Start Time</th>
 	        <th>End Time</th>
-	        <th> EDIT </th>
+	        <th> DEACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -59,16 +21,19 @@
 	    {% for x in events%}
 	    	{% if x.is_active == True %}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'edit_event' x.id %}">
+							 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.pin_checkin}}</td>
 	        		<td>{{x.pin_checkin}}</td>
 	        		<td>{{x.start_time}}</td>
 	        		<td>{{x.end_time}}</td>
-	        		<td> <a href="{% url 'edit_event' x.id %}">
-							 EDIT
+	        		
+					<td> <a href="{% url 'deactivate_event' x.id 'see_events'%}">
+							 DEACTIVATE
 						</a> </td>
-					<td> <a href="{% url 'delete_event' x.id %}">
+					<td> <a href="{% url 'delete_event' x.id 'see_events' %}" onclick="return confirm('Useful statistical data relating to this event will be deleted and impossible to recover with the deletion of this event. Instead, we suggest *deactivation* of obselete events. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>
@@ -97,7 +62,7 @@
 	        <th>CheckOut Pin</th>
 	        <th>Start Time</th>
 	        <th>End Time</th>
-	        <th> EDIT </th>
+	        <th> ACTIVATE </th>
 	        <th> DELETE </th>
 	      </tr>
 	    </thead>
@@ -105,16 +70,18 @@
 	    {% for x in events%}
 	    	{% if x.is_active == False %}
 	    		<tr>
-	        		<td>{{x.name}}</td>
+	        		<td> <a href="{% url 'edit_event' x.id %}">
+						 {{x.name}}
+						</a> </td>
 	        		<td>{{x.description}}</td>
 	        		<td>{{x.pin_checkin}}</td>
 	        		<td>{{x.pin_checkout}}</td>
 	        		<td>{{x.start_time}}</td>
 	        		<td>{{x.end_time}}</td>
-	        		<td> <a href="{% url 'edit_event' x.id %}">
-							 EDIT
+					<td> <a href="{% url 'activate_event' x.id 'see_events'%}">
+							 ACTIVATE
 						</a> </td>
-					<td> <a href="{% url 'delete_event' x.id %}">
+					<td> <a href="{% url 'delete_event' x.id 'see_events' %}" onclick="return confirm('Useful statistical data relating to this event will be deleted and impossible to recover with the deletion of this event. Instead, we suggest *deactivation* of obselete events. Do you wish to proceed with deletion?')">
 							 DELETE
 						</a> </td>
 	      		</tr>
