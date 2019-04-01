@@ -136,7 +136,7 @@ class make_checkin(APIView):
 		event_start_time = event_instance.start_time.replace(tzinfo=utc)
 		event_end_time   = event_instance.end_time.replace(tzinfo=utc) 
 
-		print(str(event_instance.start_time))
+		# print(str(event_instance.start_time))
 		#TIME ERROR CHECKS
 		if ((event_start_time - time_now).total_seconds() >= tolerance):
 			return Response(data = {'error_message':'event has not started', 'success':False})
@@ -351,7 +351,7 @@ class register_user_for_event(generics.CreateAPIView):
 			raise Http404#not sure if http404 error is appropriate
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 
-#NGO API Routes
+#BUSINESS API Routes
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class get_all_coupon(generics.ListAPIView):
 	#setting authentication, permission to empty!
