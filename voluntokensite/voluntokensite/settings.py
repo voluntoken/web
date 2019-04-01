@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'api.apps.ApiConfig',
+    'bootstrap4',
 ]
 
 REST_FRAMEWORK = {

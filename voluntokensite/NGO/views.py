@@ -16,7 +16,7 @@ from django.urls import reverse
 #VIEW STATS
 #----------------------------------------------------------------------------------------------------------------------------------------------------
 class View_Stats(View):
-	template_name = 'ngo_stats.html'
+	template_name = 'NGO_stats.html'
 
 	def get(self, request, *args, **kwargs):
 		if(request.user.user_type != 'NG'):

@@ -4,7 +4,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-	path('ngo_stats/', views.View_Stats.as_view(), name='ngo_stats'),
+	path('NGO_stats/', views.View_Stats.as_view(), name='NGO_stats'),
 	path('create_event/', views.Create_Event.as_view(), name='create_event'),
 	path('see_events/', views.Show_Events.as_view(), name='see_events'),
 	path('edit_event/<event_id>', views.Change_Event.as_view(), name='edit_event'),

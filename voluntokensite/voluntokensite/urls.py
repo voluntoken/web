@@ -18,7 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
 #    path('api/v1/', include('api.urls')),
-    
+
     path('users/', include('users.urls')),
     path('users/', include('django.contrib.auth.urls')),
 #----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -29,7 +29,6 @@ urlpatterns = [
 	path('BUSINESS/', include('BUSINESS.urls')),
 	path('NGO/', include('NGO.urls')),
 #----------------------------------------------------------------------------------------------------------------------------------------------------
-
 ]
 
 if settings.DEBUG:
