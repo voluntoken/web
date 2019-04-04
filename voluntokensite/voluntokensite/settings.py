@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'api.apps.ApiConfig',
     'bootstrap4',
+    'widget_tweaks'
 ]
 
 REST_FRAMEWORK = {
