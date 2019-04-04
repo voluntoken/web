@@ -42,16 +42,6 @@
 							        <th> DELETE </th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-											<th>Coupon</th>
-							        <th>Description</th>
-							        <th>Token Price (V)</th>
-							        <th>Approximate Item Profit ($)</th>
-							        <th> DEACTIVATE </th>
-							        <th> DELETE </th>
-                    </tr>
-                  </tfoot>
                   <tbody>
 										{% for x in coupons%}
 								    	{% if x.is_donation == False and x.is_active == True%}
@@ -103,16 +93,6 @@
 							        <th> DELETE </th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-											<th>Coupon</th>
-							        <th>Description</th>
-							        <th>Token Price (V)</th>
-							        <th>Approximate Item Profit ($)</th>
-							        <th> ACTIVATE </th>
-							        <th> DELETE </th>
-                    </tr>
-                  </tfoot>
                   <tbody>
 										{% for x in coupons%}
 											    	{% if x.is_donation == False and x.is_active == False%}
@@ -156,16 +136,6 @@
 											<th> DELETE </th>
 										</tr>
 									</thead>
-									<tfoot>
-										<tr>
-											<th>Coupon</th>
-											<th>Description</th>
-											<th>Token Price (V)</th>
-											<th>Approximate Item Profit ($)</th>
-											<th> DEACTIVATE </th>
-											<th> DELETE </th>
-										</tr>
-									</tfoot>
 									<tbody>
 										{% for x in coupons%}
 											{% if x.is_donation == False and x.is_active == True%}
@@ -218,16 +188,6 @@
 											<th> DELETE </th>
 										</tr>
 									</thead>
-									<tfoot>
-										<tr>
-											<th>Coupon</th>
-											<th>Description</th>
-											<th>Token Price (V)</th>
-											<th>Approximate Item Profit ($)</th>
-											<th> ACTIVATE </th>
-											<th> DELETE </th>
-										</tr>
-									</tfoot>
 									<tbody>
 										{% for x in coupons%}
 	    	{% if x.is_donation == True and x.is_active == True%}
@@ -272,16 +232,6 @@
 											<th> DELETE </th>
 										</tr>
 									</thead>
-									<tfoot>
-										<tr>
-											<th>Coupon</th>
-											<th>Description</th>
-											<th>Token Price (V)</th>
-											<th>Approximate Item Profit ($)</th>
-											<th> ACTIVATE </th>
-											<th> DELETE </th>
-										</tr>
-									</tfoot>
 									<tbody>
 										{% for x in coupons%}
 								    	{% if x.is_donation == True and x.is_active == False%}

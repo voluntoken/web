@@ -111,18 +111,6 @@
 							        <th> DELETE </th>
                     </tr>
                   </thead>
-                  <tfoot>
-                    <tr>
-											<th>Event</th>
-							        <th>Description</th>
-							        <th>CheckIn Pin </th>
-							        <th>CheckOut Pin</th>
-							        <th>Start Time</th>
-							        <th>End Time</th>
-							        <th> ACTIVATE </th>
-							        <th> DELETE </th>
-                    </tr>
-                  </tfoot>
                   <tbody>
 										{% for x in events%}
 								    	{% if x.is_active == False %}
