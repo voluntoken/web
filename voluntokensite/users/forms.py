@@ -103,6 +103,7 @@ class CustomUserCreationForm_NGO(UserCreationForm):
         widgets = {}
         for field in fields:
             widgets[field] = forms.TextInput(attrs={'class': "form-control form-control-user"})
+        widgets['parent_ngo'] = forms.Select(attrs={"class": "btn btn-primary btn-user btn-block"})
 
     def clean(self):
         self.instance.user_type = 'NG'
@@ -136,6 +137,7 @@ class CustomUserCreationForm_Business(UserCreationForm):
         widgets = {}
         for field in fields:
             widgets[field] = forms.TextInput(attrs={'class': "form-control form-control-user"})
+        widgets['parent_business'] = forms.Select(attrs={"class": "btn btn-primary btn-user btn-block"})
 
     def clean(self):
         self.instance.user_type = 'BU'
