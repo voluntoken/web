@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block title %}Welcome to Voluntoken! {% endblock %}
+{% block content %}
+<body class="bg-gradient-primary">
+
+  <div class="container">
+
+    <div class="card o-hidden border-0 shadow-lg my-5">
+      <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+          <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+          <div class="col-lg-7">
+            <div class="p-5">
+                <h1 class="h3 mb-4 text-gray-800">Hi {{ user.first_name }}!</h1>
+								<a href="{% url 'see_coupons' %}" class="btn btn-primary btn-user btn-block"> See Coupons</a>
+								<a href="{% url 'business_stats' %}" class="btn btn-primary btn-user btn-block"> View Stats </a>
+								<a href="{% url 'business_settings' %}" class="btn btn-primary btn-user btn-block"> Settings </a>
+								<a href="{% url 'logout' %}" class="btn btn-primary btn-user btn-block">Logout</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="{% static 'js/sb-admin-2.js' %}"></script>
+
+</body>
+{% endblock %}
